@@ -1,0 +1,57 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-content">
+   <section class="section-padding">
+      <div class="container">
+         <div class="d-flex align-items-center px-3 py-2 border mb-4">
+            <div class="text-start">
+               <h4 class="mb-0 h4 fw-bold">My Bag ({{wishlist_items.count}} items)</h4>
+            </div>
+            <div class="ms-auto">
+               <a href="{% url 'user_products:products_list' %}" role="button" class="btn btn-light btn-ecomm">Continue Shopping</a>
+            </div>
+         </div>
+         <div class="row g-4">
+            <div class="col-12 col-xl-8">
+               {% for item in wishlist_items %}
+               <div class="card rounded-0 mb-3">
+                  <div class="card-body">
+                     <div class="d-flex flex-column flex-lg-row gap-3">
+                        <div class="product-img">
+                           <img src="{{ item.product.product_varient.first.product_images.first.image.url }}" width="150" alt="">
+
+                        </div>
+                        <div class="product-info flex-grow-1">
+                           <h5 class="fw-bold mb-0">{{item.product.product_name}}</h5><br>
+                           <p>colors: 
+                              {% for color in item.product.product_varient.all%}
+                                 {{color.color}} 
+                              {% endfor%}
+                           </p>
+                           <div class="product-price d-flex align-items-center gap-2 mt-3">
+                              <div class="h6 fw-bold">₹{{ item.product.offer_price }}</div>
+
+                              <div class="h6 fw-light text-muted text-decoration-line-through">₹{{item.product.price}}</div>
+                              <div class="h6 fw-bold text-danger">({{item.product.offer.first.discount}}% off)</div>
+                           </div>
+                        </div>
+                        <div class="d-none d-lg-block vr"></div>
+                        <div class="d-grid gap-2 align-self-start align-self-lg-center">
+                           <a href="{% url 'wishlist_cart:wishlist_remove' item.product.id%}" role="button" class="btn btn-ecomm">Remove</a>
+                           <a href="{% url 'user_products:add_cart' item.product.product_varient.first.id %}" class="btn btn-dark"><i class="bi bi-basket3"></i></a>
+                           <!--    -->
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               {% endfor %}
+
+            </div>
+         </div><!--end row-->
+
+      </div>
+   </section>
+</div>
+{% endblock %}

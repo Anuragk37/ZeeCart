@@ -1,0 +1,94 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-content">
+   <section class="section-padding">
+      <div class="container">
+         <div class="d-flex align-items-center px-3 py-2 border mb-4">
+            <div class="text-start">
+               <h4 class="mb-0 h4 fw-bold">Choose address</h4>
+            </div>
+            
+         </div>
+         <div class="row g-4">
+            <div class="col-12 col-xl-8">
+               <form action="{% url 'checkout_payment' %}" method="post">
+               {% csrf_token %}
+                  <div class="card-body">
+                     {% for address in addresses %}
+                     <div class="card rounded-0 mb-3">
+                        <div class="card-body">
+                        <div class="d-flex flex-column flex-xl-row gap-3">
+                           <div class="address-info form-check flex-grow-1">
+                              <input class="form-check-input" type="radio" name="address" value="{{ address.id}}"
+                                 id="flexRadioDefaultAddress{{address.id}}" {% if forloop.first %}checked{% endif %} >
+                              <label class="form-check-label" for="flexRadioDefaultAddress{{address.id}}">
+                              <span class="fw-bold mb-0 h5">{{address.name}}</span><br>
+                              {{address.address}} <br>
+                              {{address.locality}}, {{address.state}}<br>
+                              PIN: {{address.pincode}} <br>
+                              Mobile: <span class="text-dark fw-bold">{{address.phone_no}}</span>
+                              </label>
+                           </div>
+                           <div class="d-none d-xl-block vr"></div>
+                           <div class="d-grid gap-2 align-self-start align-self-xl-center">
+                           <a href="{% url 'edit_address' address.id %}" role="button" class=" btn btn-outline-dark px-5 btn-ecomm">Edit</a>
+                           </div>
+                        </div>
+                        </div>
+                     </div>
+                     {% endfor %}                  
+                     <div class="card rounded-0">
+                     <div class="card-body">
+                        <a href="{% url 'add_address' %}?from_checkout=true" role="button" class="btn btn-ecomm">Add Address</a>
+                     </div>
+                     </div>
+                     <button class="btn btn-dark btn-ecomm rounded-0 mt-3 me-auto"  type="submit">Continue</button>
+                  </div>
+               </form>
+
+            </div>
+            <div class="col-12 col-xl-4">
+               <div class="card rounded-0 mb-3">
+                  <div class="card-body">
+                     <h5 class="fw-bold mb-4">Order Summary</h5>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Bag Total</p>
+                        <p class="mb-0">₹<span id="cart-price">{{order_data.cart_price}}</span></p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Bag discount</p>
+                        <p class="mb-0 text-success"><span id="discount">{{order_data.discount}}</span></p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Delivery</p>
+                        <p class="mb-0">₹{{order_data.delivery_charge}}</p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between fw-bold text-content">
+                        <p class="mb-0">Total Amount</p>
+                        <p class="mb-0">₹<span id="total-price">{{order_data.total_amount}}</span></p>
+                     </div>
+                  </div>
+               </div>
+               <!-- <div class="card rounded-0">
+                  <div class="card-body">
+                     <h5 class="fw-bold mb-4">Apply Coupon</h5>
+                     <div class="input-group">
+                        <input type="text" class="form-control rounded-0" placeholder="Enter coupon code">
+                        <button class="btn btn-dark btn-ecomm rounded-0" type="button">Apply</button>
+                     </div>
+                  </div>
+               </div> -->
+            </div>
+         </div><!--end row-->
+      </div>
+   </section>
+</div>
+{% endblock %}
+
+
+

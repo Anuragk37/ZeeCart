@@ -1,0 +1,291 @@
+{% extends 'userhome/base.html' %}
+{% load static %}
+
+{% block head %}
+<style>
+    /* Hide the default radio button */
+    input[type="radio"] {
+        display: none;
+    }
+
+    /* Style the label as a button */
+    .color-label {
+        display: inline-block;
+        width: 60px;
+        /* Adjust the width as needed */
+        height: 60px;
+        /* Adjust the height as needed */
+        margin: 5px;
+        border: 2px solid #ddd;
+        /* Default border color */
+        cursor: pointer;
+        background-size: cover;
+        /* Make the background image cover the entire area */
+        background-position: center;
+    }
+
+    /* Style the label when the radio button is checked */
+    input[type="radio"]:checked+.color-label {
+        border-color: #007bff;
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    /* Style the label when the radio button is checked */
+    input[type="radio"]:checked+.color-label {
+        border-color: #007bff;
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    #zoom-image-container {
+        position: absolute;
+        top: 90px;
+        right: 50;
+        left: 620px;
+        width: 400px;
+        height: 400px;
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 0;
+        border: 2px solid #000;
+    }
+
+    #product-carousel:hover+#zoom-image-container {
+        opacity: 1;
+    }
+
+    #zoomed-image {
+        width: 100%;
+
+        height: auto;
+        transform: scale(3);
+        transition: transform 0.3s;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <section class="py-4">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-12 col-xl-7">
+                    <div class="product-images ">
+                        <div class="main-image-container" style="height: 500px;">
+                            <img id="mainImage" class="img-fluid mx-auto" src="{{ product_images.0.0.image.url }}"
+                                style="height: 100%;" alt="Main Image" onmousemove="zoomImage(event, this)"
+                                onmouseleave="resetZoomedImage()">
+                        </div>
+                        <div id="zoom-image-container" class="shadow">
+                            <img id="zoomed-image" src="">
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-xl-5 mt-4 ms-4" style=" width: 75%;">
+                        <div class="thumbnail-images">
+                            <div class="row g-3">
+                                <div class="slick-carousel">
+                                    {% for image_set in product_images %}
+                                    {% for image in image_set %}
+                                    <div class="col-4">
+                                        <div class="thumbnail-container"
+                                            style="height: 120px; width: 120px; border: 2px solid rgb(174, 174, 174);">
+                                            <img src="{{ image.image.url }}" class="img-fluid ml-5 border-thumbnail"
+                                                alt="Thumbnail Image"
+                                                onclick="changeMainImage('{{ image.image.url }}')">
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-12 col-xl-5 mt-5">
+                    <div class="product-info mt-4">
+                        <h4 class="product-title fw-bold mb-1">{{product.product_name}}</h4>
+                        <hr>
+                        <div class="product-price d-flex align-items-center gap-3">
+                            <div class="h4 fw-bold">₹{{product.offer_price}}</div>
+                            <div class="h5 fw-light text-muted text-decoration-line-through">{{product.price}}</div>
+                            {% if product.offer.first%}
+                            <div class="h6 fw-bold text-danger">({{product.offer.first.discount}}% off)</div>
+                            {% else %}                              
+                            <div class="h6 fw-bold text-danger">({{product.category.category_offer.first.discount}}% off)</div>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <p class="mt-4">Type : {{product.category}}</p>
+                            <p class="mt-4">Brand : {{product.brand}}</p>
+                        </div>
+                        <div class="product-info mt-4">
+                            <h6 class="fw-bold ">Product Details</h6>
+                            <p class="mb-1">{{product.description}}</p>
+                        </div>
+                        <hr class="my-3">
+
+
+                        <div class="size-chart mt-5">
+                            <h6 class="fw-bold mb-3">Colors</h6>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {% for pv in product_varient %}
+                                <div class="color-container">
+                                    <input type="radio" class="checkk-varient" id="color{{ pv.id }}" name="color"
+                                        value="{{ pv.id }}" style="display: none;" {% if forloop.first %}checked{% endif%}>
+                                    <label for="color{{ pv.id }}" class="color-label"style="background-image: url('{{ pv.product_images.first.image.url }}');"
+                                        onclick="changeMainImage('{{ pv.product_images.first.image.url }}')"></label>
+                                    {% if pv.stock == 0%}
+                                    <h6 style="color: red; font-size: smaller;">out of stock</h6>
+                                    {% elif pv.stock < 10 %} 
+                                    <h6 style="color: red; font-size: smaller;">{{ pv.stock }}item left</h6>
+                                    {% endif %}
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="cart-buttons mt-3">
+
+                            <div class="buttons d-flex flex-column flex-lg-row gap-3 mt-4">
+                                <a href="{% url 'user_products:add_cart' product_varient.0.id %}" class="btn btn-lg btn-dark btn-ecomm px-5 py-3 col-lg-6"
+                                    data-varient-id="{{ product_varient.0.id }}" id="addToBagButton" data-add-to-cart-url="{% url 'user_products:add_cart' 0 %}">Add to Bag</a>
+                                    <a href="{% url 'user_products:add_wishlist' product.id %}" class="btn btn-lg btn-outline-dark btn-ecomm px-5 py-3"><i
+                                        class="bi bi-suit-heart me-2"></i>Wishlist</a>
+                            </div>
+                        </div>
+                        <hr class="my-3">
+                    </div>
+                </div>
+            </div><!--end row-->
+        </div>
+    </section>
+
+    <section class="product-tab-section section-padding bg-light mt-5">
+        <div class="container">
+          <div class="text-center pb-3">
+            <h3 class="mb-0 h3 fw-bold">Similar products</h3>
+            <p class="mb-0 text-capitalize">The purpose of lorem ipsum</p>
+          </div>
+          <div class="row">
+          </div>
+          <hr>
+          <div class="tab-content tabular-product">
+            
+            <div class="tab-pane fade show active" id="new-arrival">
+              <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-5 g-4">
+                {% for product in similar_products %}
+                <div class="col"> 
+                    <div class="card">
+                        <div class="position-relative overflow-hidden">
+                            <div class="product-options d-flex align-items-center justify-content-center gap-2 mx-auto position-absolute bottom-0 start-0 end-0">
+                                <a href="javascript:;"><i class="bi bi-heart"></i></a>
+                                <a href="javascript:;"><i class="bi bi-basket3"></i></a>
+                            </div>
+                            {% for product_varient in product.product_varient.all|slice:":1" %}
+                                {% for product_image in product_varient.product_images.all|slice:":1" %}
+                                    <a href="{% url 'user_products:product_detail' product.id %}">
+                                        <img src="{{ product_image.image.url }}" style="width: 100%; height: 200px;" alt="...">
+                                    </a>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <div class="card-body">
+                            <div class="product-info text-center">
+                                <h6 class="mb-1 fw-bold product-name">{{product.product_name}}</h6>
+                                <p class="mb-0 h6 fw-bold product-price">₹{{product.price}}</p>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                {% endfor %}
+              </div>
+            
+            
+            </div>
+            
+          </div>
+        </div>
+      </section>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(".checkk-varient").on("click", function () {
+        var imageUrl = $(this).data("image-url");
+        var varient_id = $(this).val();
+        console.log(varient_id)
+        changeMainImage(imageUrl);
+
+        $("#addToBagButton").data("varient-id", varient_id);
+        var addCartUrl = "{% url 'user_products:add_cart' 0 %}".replace('0', varient_id);
+        $("#addToBagButton").data("add-to-cart-url", addCartUrl);
+        $("#addToBagButton").attr("href", addCartUrl);
+
+    });
+
+    $(".slick-carousel").slick({
+        infinite: true,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        prevArrow: '<button type="button" class="slick-prev me-5"><i class="bi bi-arrow-left"></i></button>',
+        nextArrow: '<button type="button" class="slick-next "><i class="bi bi-arrow-right"></i></button>',
+        vertical: false,
+        verticalSwiping: false,
+
+    });
+
+    new Magnifier({
+        magnifier: '#mainImage',
+        width: 200,
+        height: 200,
+    });
+
+    function changeMainImage(imageUrl) {
+        $('#mainImage').attr('src', imageUrl);
+    }
+
+    function zoomImage(event, element) {
+        var zoomedImage = document.getElementById('zoomed-image');
+        var zoomedImageContainer = document.getElementById('zoom-image-container')
+
+        // Calculate the position of the mouse pointer relative to the image
+        var x = event.offsetX / element.offsetWidth;
+        var y = event.offsetY / element.offsetHeight;
+
+        // Set the zoomed image source to the clicked image source
+        zoomedImage.src = element.src;
+
+        // Adjust the transform origin based on the mouse pointer position
+        zoomedImage.style.transformOrigin = (x * 100) + '% ' + (y * 100) + '%';
+
+        // Apply the zoom effect by scaling the image
+        zoomedImage.style.transform = 'scale(2)'; // Adjust the zoom level as desired
+
+        // Change z-index to 999 on mouse hover
+        zoomedImageContainer.style.zIndex = 5000;
+        zoomedImageContainer.style.opacity = 1;
+    }
+
+    function resetZoomedImage() {
+        var zoomedImageContainer = document.getElementById('zoom-image-container')
+        zoomedImageContainer.style.transform = 'none';
+        // Reset z-index to its initial value on mouse leave
+        zoomedImageContainer.style.zIndex = 1;
+        zoomedImageContainer.style.opacity = 0;
+    }
+
+
+
+</script>
+{% endblock %}

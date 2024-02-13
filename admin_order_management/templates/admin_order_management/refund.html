@@ -1,0 +1,71 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+
+{% block head %}
+<style>
+   .refund-card {
+      width: 600px;
+     max-width: 400px; 
+     background-color: #fff;
+     padding: 20px; 
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+   }
+ 
+   .refund-card h5 {
+     text-align: center;
+   }
+   .refund-card h4 {
+     text-align: center;
+     color: green;
+   }
+ 
+   .refund-card p {
+     display: flex;
+     justify-content: space-between; 
+     margin-bottom: 10px; 
+   }
+
+   .refund-btn {
+      display: flex;
+      width: 180px;
+      justify-content: center;
+      align-items: center;
+      font-size: larger;
+      border-radius: 16px;
+      margin: 0 auto; /* Center the button horizontally */
+      background-color: #343a40; /* Dark background color */
+      color: #fff; /* Text color */
+   }
+ </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid pt-4 px-4 mt-5">
+   <div class="row">
+     <div class="col-md-12 d-flex justify-content-center align-items-center">
+       <div class="card shadow refund-card">
+         <div class="card-body" style="line-height: 30px;">
+           <h5 class="card-title">Refund Details</h5>
+           <hr>
+           <p class="card-text"><span>Product Name:</span> {{order_item.product_varient.product.product_name}}</p>
+           <p class="card-text"><span>Variant:</span> {{order_item.product_varient.color}}</p>
+           <p class="card-text"><span>Order ID:</span> {{order_item.order.id}}</p>
+           <p class="card-text"><span>Price:</span> {{order_item.price}}</p>
+           <p class="card-text"><span>Quantity:</span> {{order_item.quantity}}</p>
+           <hr>
+           <p class="card-text"><span>Refundable Amount:</span> {{redund_amount}}</p>
+         </div>
+         {% if order_item.is_refunded %}
+         <h4>refunded</h4>
+         {% else%}
+         <a href="{% url 'refund' order_item.id %}" class="refund-btn mt-3" role="button">Refund</a>
+         {% endif %}
+       </div>
+     </div>
+   </div>
+ </div>
+
+{% endblock %}
+

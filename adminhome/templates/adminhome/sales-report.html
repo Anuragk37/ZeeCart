@@ -1,0 +1,536 @@
+{% extends "adminhome/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <label class="input-group-text" for="time-period-select">Select Time Period:</label>
+                <select class="form-select" id="time-period-select">
+                    <option value="today" selected>Today</option>
+                    <option value="week">Week</option>
+                    <option value="month">Month</option>
+                    <option value="year">Year</option>
+                </select>
+            </div>
+        </div>
+        <div class="date-filter col-md-6">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="date" name="from-date" id="from-date" class="form-control mb-3">
+                </div>
+                <div class="col-md-4">
+                    <input type="date" name="to-date" id="to-date" class="form-control mb-3">
+                </div>
+                <div class="col-md-4">
+                    <button onclick="generate()" class="btn btn-primary" >Get</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mt-3 today-report">
+        <div class="col-12 text-end mt-3">
+            <a href="{% url 'sales_report_pdf' time_period='today' %}" role="button" class="btn btn-dark">Download As pdf</a>
+            <a href="{% url 'excel_report' time_period='today' %}" role="button" class="btn btn-dark">Download As Excel</a>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Sales Report</h3>
+                <hr>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Orders:</div>
+                    <div>{{ todays_order }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Revenue:</div>
+                    <div>₹{{ total_revenue }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total order items:</div>
+                    <div>{{ today_order_items }}</div>
+                </div>
+
+                <!-- <div class="d-flex justify-content-between">
+                    <div class="fw-bold">Price:</div>
+                    <div>{{ order_item.price }}</div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Top 5 Selling Products</h3>
+                <hr>
+
+                {% for product in top_products %}
+                    <div class="mb-3 d-flex justify-content-between">
+                        <p class="mb-1">{{ product.product_varient__product__product_name }}</p>
+                        <div>{{ product.total_quantity }}</div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-12">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Order Items</h3>
+                <hr>
+
+                
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Vareint</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Order id</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in today_order_products %}
+                      <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{product.product_varient.product.product_name}}</td>
+                        <td>{{product.product_varient.color}}</td>
+                        <td>₹{{product.price}}</td>
+                        <td>{{product.order.id}}</td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                
+            </div>
+        </div>
+
+        
+
+    </div>
+    <div class="row g-4 mt-3 week-report">
+        <div class="col-12 text-end mt-3">
+            <a href="{% url 'sales_report_pdf' time_period='week' %}" role="button" class="btn btn-dark">Download As pdf</a>
+            <a href="{% url 'excel_report' time_period='week' %}" role="button" class="btn btn-dark">Download As Excel</a>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Sales Report</h3>
+                <hr>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Orders:</div>
+                    <div>{{ week_order_count }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Revenue:</div>
+                    <div>₹{{ week_revenue }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total ordered items:</div>
+                    <div>{{weekly_order_items}}</div>
+                </div>
+
+                <!-- <div class="d-flex justify-content-between">
+                    <div class="fw-bold">Price:</div>
+                    <div>{{ order_item.price }}</div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Top 5 Selling Products</h3>
+                <hr>
+
+                {% for product in week_top_products %}
+                    <div class="mb-3 d-flex justify-content-between">
+                        <p class="mb-1">{{ product.product_varient__product__product_name }}</p>
+                        <div>{{ product.total_quantity }}</div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-12">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Order Items</h3>
+                <hr>
+
+                
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Vareint</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Order id</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in weekly_order_products %}
+                      <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{product.product_varient.product.product_name}}</td>
+                        <td>{{product.product_varient.color}}</td>
+                        <td>₹{{product.price}}</td>
+                        <td>{{product.order.id}}</td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                
+            </div>
+        </div>
+        
+
+    </div>
+    <div class="row g-4 mt-3 month-report">
+        <div class="col-12 text-end mt-3">
+            <a href="{% url 'sales_report_pdf' time_period='month' %}" role="button" class="btn btn-dark">Download As pdf</a>
+            <a href="{% url 'excel_report' time_period='month' %}" role="button" class="btn btn-dark">Download As Excel</a>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Sales Report</h3>
+                <hr>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Orders:</div>
+                    <div>{{ month_order_count }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Revenue:</div>
+                    <div>₹{{ month_revenue }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total order items:</div>
+                    <div>{{ monthly_order_items }}</div>
+                </div>
+
+                <!-- <div class="d-flex justify-content-between">
+                    <div class="fw-bold">Price:</div>
+                    <div>{{ order_item.price }}</div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Top 5 Selling Products</h3>
+                <hr>
+
+                {% for product in month_top_products %}
+                    <div class="mb-3 d-flex justify-content-between">
+                        <p class="mb-1">{{ product.product_varient__product__product_name }}</p>
+                        <div>{{ product.total_quantity }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-sm-12 col-md-12">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Order Items</h3>
+                <hr>
+
+                
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Vareint</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Order id</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in monthly_order_products %}
+                      <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{product.product_varient.product.product_name}}</td>
+                        <td>{{product.product_varient.color}}</td>
+                        <td>₹{{product.price}}</td>
+                        <td>{{product.order.id}}</td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- year -->
+
+
+    <div class="row g-4 mt-3 year-report">
+        <div class="col-12 text-end mt-3">
+            <a href="{% url 'sales_report_pdf' time_period='year' %}" role="button" class="btn btn-dark">Download As pdf</a>
+            <a href="{% url 'excel_report' time_period='year' %}" role="button" class="btn btn-dark">Download As Excel</a>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Sales Report</h3>
+                <hr>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Orders:</div>
+                    <div>{{ year_order_count }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Revenue:</div>
+                    <div>₹{{ year_revenue }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total order items:</div>
+                    <div>{{ yearly_order_items }}</div>
+                </div>
+
+                <!-- <div class="d-flex justify-content-between">
+                    <div class="fw-bold">Price:</div>
+                    <div>{{ order_item.price }}</div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Top 5 Selling Products</h3>
+                <hr>
+
+                {% for product in year_top_products %}
+                    <div class="mb-3 d-flex justify-content-between">
+                        <p class="mb-1">{{ product.product_varient__product__product_name }}</p>
+                        <div>{{ product.total_quantity }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-12">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Order Items</h3>
+                <hr>
+
+                
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Vareint</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Order id</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in yearly_order_products %}
+                      <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{product.product_varient.product.product_name}}</td>
+                        <td>{{product.product_varient.color}}</td>
+                        <td>₹{{product.price}}</td>
+                        <td>{{product.order.id}}</td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                
+            </div>
+        </div>
+
+    </div>
+    <!-- Add these buttons/links where you want them in your template -->
+
+    <div class="row g-4 mt-3 date-filter-report">
+        <div class="col-12 text-end mt-3">
+            <a id="download-link" role="button" class="btn btn-dark">Download as pdf </a>
+            <a id="download-link-excel" role="button" class="btn btn-dark">Download as excel</a>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Sales Report</h3>
+                <hr>
+    
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Orders:</div>
+                    <div id="total-orders"></div>
+                </div>
+    
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total Revenue:</div>
+                    <div id="total-revenue">₹</div>
+                </div>
+    
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="fw-bold">Total order items:</div>
+                    <div id="total-order-items"></div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-sm-12 col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="mb-4">Top 5 Selling Products</h3>
+                <hr>
+    
+                <div id="top-products">
+                    <!-- Top 5 Selling Products will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+</div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<!-- Sale & Revenue End -->
+{% endblock %}
+
+{% block script %}
+<!-- Add this script at the end of your HTML body -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var timePeriodSelect = document.getElementById("time-period-select");
+        var todayReport = document.querySelector('.today-report');
+        var weekReport = document.querySelector('.week-report');
+        var monthReport = document.querySelector('.month-report');
+        var yearReport = document.querySelector('.year-report');
+        var dateReport = document.querySelector('.date-filter-report');
+
+        timePeriodSelect.addEventListener("change", function() {
+            var selectedValue = this.value;
+
+            if (selectedValue === 'today') {
+                todayReport.style.display = 'flex';
+                weekReport.style.display = 'none';
+                monthReport.style.display = 'none';
+                yearReport.style.display = 'none';
+                dateReport.style.display = 'none';
+            } else if (selectedValue === 'week') {
+                todayReport.style.display = 'none';
+                weekReport.style.display = 'flex';
+                monthReport.style.display = 'none';
+                yearReport.style.display = 'none';
+                dateReport.style.display = 'none';
+            } else if (selectedValue === 'month') {
+                todayReport.style.display = 'none';
+                weekReport.style.display = 'none';
+                monthReport.style.display = 'flex';
+                yearReport.style.display = 'none';
+                dateReport.style.display = 'none';
+            } else if (selectedValue === 'year') {
+                todayReport.style.display = 'none';
+                weekReport.style.display = 'none';
+                monthReport.style.display = 'none';
+                yearReport.style.display = 'flex';
+                dateReport.style.display = 'none';
+            }
+            // Add similar conditions for other time periods if needed
+        });
+
+        // Set initial display based on the initially selected value ("Today")
+        var initialSelectedValue = timePeriodSelect.value;
+        if (initialSelectedValue === 'today') {
+            todayReport.style.display = 'flex';
+            weekReport.style.display = 'none';
+            monthReport.style.display = 'none';
+            yearReport.style.display = 'none';
+            dateReport.style.display = 'none';
+        } 
+    });
+
+    function generate() {
+        var fromDate = document.getElementById("from-date").value;
+        var toDate = document.getElementById("to-date").value;
+
+        var todayReport = document.querySelector('.today-report');
+        var weekReport = document.querySelector('.week-report');
+        var monthReport = document.querySelector('.month-report');
+        var yearReport = document.querySelector('.year-report');
+        var dateReport = document.querySelector('.date-filter-report');
+
+        todayReport.style.display = 'none';
+        weekReport.style.display = 'none';
+        monthReport.style.display = 'none';
+        yearReport.style.display = 'none';
+        dateReport.style.display = 'flex';
+
+        console.log("From Date:", fromDate);
+        console.log("To Date:", toDate);
+
+        var downloadLink = "{% url 'sales_report_pdf' time_period='date' %}?from_date=" + fromDate + "&to_date=" + toDate;
+
+        // Update the href attribute of the anchor tag
+        document.getElementById("download-link").href = downloadLink;
+
+        var downloadLinkExcel = "{% url 'excel_report' time_period='date' %}?from_date=" + fromDate + "&to_date=" + toDate;
+
+        // Update the href attribute of the anchor tag
+        document.getElementById("download-link-excel").href = downloadLinkExcel;
+
+        let dates = {};
+        dates['from_date'] = fromDate;
+        dates['to_date'] = toDate;
+
+        $.ajax({
+            url: "{% url 'date_filter' %}",
+            data: dates,
+            dataType: 'json',
+            beforeSend: function () {
+                console.log("sending");
+            },
+            success: function (response) {
+                console.log("success")
+                console.log(response)
+                updateDateFilterReport(response);
+            },
+            
+        });
+    }
+
+    function updateDateFilterReport(response) {
+    // Update the Sales Report section
+        document.getElementById("total-orders").innerHTML = response.order_count;
+        document.getElementById("total-revenue").innerHTML = '₹' + response.revenue;
+        document.getElementById("total-order-items").innerHTML = response.order_items;
+
+
+
+        // Update Top 5 Selling Products
+        var topProductsHTML = '';
+        for (var i = 0; i < response.top_products.length; i++) {
+            topProductsHTML += '<div class="d-flex justify-content-between mb-3">';
+            topProductsHTML += '<div class="fw-bold">' + response.top_products[i].product_varient__product__product_name + '</div>';
+            topProductsHTML += '<div>' + response.top_products[i].quantity + '</div>';
+            topProductsHTML += '</div>';
+        }
+        document.getElementById("top-products").innerHTML = topProductsHTML;
+
+    
+        
+    }
+
+</script>
+{% endblock %}
+
+
+
+

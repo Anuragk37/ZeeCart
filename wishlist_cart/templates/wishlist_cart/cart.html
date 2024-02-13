@@ -1,0 +1,184 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+{% load mathfilters %}
+
+{% block content %}
+<div class="page-content">
+   <section class="section-padding">
+      <div class="container">
+         <div class="d-flex align-items-center px-3 py-2 border mb-4">
+            <div class="text-start">
+               <h4 class="mb-0 h4 fw-bold">My Bag ({{cart_items.count}} items)</h4>
+            </div>
+            <div class="ms-auto">
+               <a href="{% url 'user_products:products_list' %}" role="button" class="btn btn-light btn-ecomm">Continue Shopping</a>
+            </div>
+         </div>
+         {% if cart_items %}
+         <div class="row g-4">
+            <div class="col-12 col-xl-8">
+               {% for item in cart_items %}
+               <div class="card rounded-0 mb-3">
+                  <div class="card-body">
+                     <div class="d-flex flex-column flex-lg-row gap-3">
+                        <div class="product-img">
+                           <img src="{{ item.product_varient.product_images.first.image.url }}" width="150" alt="">
+
+                        </div>
+                        <div class="product-info flex-grow-1">
+                           <h5 class="fw-bold mb-0">{{item.product_varient.product.product_name}}</h5>
+                           <h6 class="fw-bold mb-0">Color : {{item.product_varient.color }}</h6>
+                           <div class="product-price d-flex align-items-center gap-2 mt-3">
+                              <div class="h6 fw-bold">₹{{ item.product_varient.product.offer_price|mul:item.quantity }}</div>
+
+                              <div class="h6 fw-light text-muted text-decoration-line-through">₹{{item.product_varient.product.price}}</div>
+                              <div class="h6 fw-bold text-danger">({{item.product_varient.product.offer.first.discount}}% off)</div>
+                           </div>
+                           {% if item.product_varient.stock == 0 %}
+                           <h6 style="color: rgb(219, 7, 7); font-size: 14px;">out of stock</h6>
+                           {% elif item.product_varient.stock < 10 %}
+                           <h6 style="color: rgb(219, 7, 7); font-size: 14px;">only {{item.product_varient.stock}} item left</h6>
+                           {% endif %}
+                           
+                           <div class="mt-3 hstack gap-2 form-outline">
+                                 <label for="quantity">Qnt</label>
+                                 <button type="button" class="btn-quantity" id="decrease" value="{{item.product_varient.id}}">-</button>
+                                 <input type="number" name="quantity" min="1" max="{{item.product_varient.stock|add:0}}" value="{{item.quantity}}" required id="" disabled>
+                                 {% if item.product_varient.stock == 0 %}
+                                 <button type="button" class="btn-quantity" id="increase" value="{{item.product_varient.id}}" disabled>+</button>
+                                 {% else %}
+                                 <button type="button" class="btn-quantity" id="increase" value="{{item.product_varient.id}}">+</button>
+                                 {% endif %}
+                           </div>
+                           
+                        </div>
+                        <div class="d-none d-lg-block vr"></div>
+                        <div class="d-grid gap-2 align-self-start align-self-lg-center">
+                           <a href="{% url 'wishlist_cart:cart_remove' item.id%}" role="button" class="btn btn-ecomm">Remove</a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               {% endfor %}
+
+            </div>
+            <div class="col-12 col-xl-4"> 
+               <div class="card rounded-0 mb-3">
+                  <div class="card-body">
+                     <h5 class="fw-bold mb-4">Order Summary</h5>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Bag Total</p>
+                        <p class="mb-0">₹<span id="cart-price">{{cart_price}}</span></p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Bag discount</p>
+                        <p class="mb-0 text-success"><span id="discount">{{discount}}</span></p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Delivery</p>
+                        <p class="mb-0">₹{{delivery_charge}}</p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between fw-bold text-content">
+                        <p class="mb-0">Total Amount</p>
+                        <p class="mb-0">₹<span id="total-price">{{total_amount}}</span></p>
+                     </div>
+                     <div class="d-grid mt-4">
+                        <a href="{% url 'checkout_address' %}" role="button" id="btn-order-place" value="{{total_amount}}" class="btn btn-dark btn-ecomm py-3 px-5" >Place Order</a>
+                     </div>
+                  </div>
+               </div>
+
+
+            </div> 
+         </div><!--end row-->
+         {% else %}
+
+         <div class="row g-4">
+            <div class="col-12 text-center">   
+               <img src="https://img.freepik.com/premium-vector/shopping-cart-with-cross-mark-wireless-paymant-icon-shopping-bag-failure-paymant-sign-online-shopping-vector_662353-912.jpg" style="width: 400px;" alt="Empty Cart">
+               <h3 class="fw-bold">Your cart is empty</h3>
+            </div>
+         </div>
+
+         {% endif %}
+
+
+      </div>
+   </section>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function () {
+   let isProcessing = false;  // Variable to track if the request is already processing
+
+   $(".btn-quantity").off("click").on("click", function () {
+      if (isProcessing) {
+         return;  // Skip processing if the request is already in progress
+      }
+
+      isProcessing = true;  // Set to true to prevent multiple clicks
+      console.log("btn clicked");
+
+      let quantities = {};
+      let product_id = $(this).val();
+      let qntInput = $(this).siblings('input[name="quantity"]');
+      let qnt = parseInt(qntInput.val());
+
+      if ($(this).attr('id') === 'increase') {
+         qnt++;
+      } else if ($(this).attr('id') === 'decrease' && qnt > 1) {
+         qnt--;
+      }
+
+      qntInput.val(qnt);
+      console.log("qnt", qnt);
+
+      quantities['product_id'] = product_id;
+      quantities['quantity'] = qnt;
+
+      $.ajax({
+         url: "{% url 'wishlist_cart:update_quantity' %}",
+         data: quantities,
+         dataType: 'json',
+         beforeSend: function () {
+            console.log("sending");
+         },
+         success: function (response) {
+            document.getElementById("total-price").innerText = response.total_amount;
+            document.getElementById("discount").innerText = response.discount;
+            document.getElementById("cart-price").innerText = response.cart_price;
+
+            document.getElementById("btn-order-place").value = response.total_amount;
+
+            console.log(response.total_amount)
+  
+            if(response.stock<qnt){
+               Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: `Out of stock, only ${response.stock} left`,
+                  });
+            }
+            console.log('successs');
+         },
+         complete: function () {
+            isProcessing = false;  // Reset the flag after the request is complete
+         }
+      });
+   });
+
+   $("#btn-order-place").on("click", function () {
+      console.log("order clicked");
+      let total_amount = $(this).val();
+      console.log(total_amount);
+   });
+});
+
+
+</script>
+{% endblock%}

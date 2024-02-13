@@ -1,0 +1,72 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4 mt-5">
+   <div class="row g-4">
+       <div class="col-12">
+         <a href="{% url 'add_coupon' %}" class="btn btn-secondary btn-md mb-2 " role="button">Add Coupon</a>
+           <div class="bg-light rounded h-100 p-4">
+               <h6 class="mb-4">Order Details</h6>
+               <div class="table-responsive">
+                   <table class="table table-striped table-bordered">
+                       <thead>
+                           <tr>
+                               <th scope="col">Sl No</th>
+                               <th scope="col">Coupon Code</th>
+                               <th scope="col">Discound</th>
+                               <!-- <th scope="col">address</th> -->
+                               <th scope="col">valid From</th>
+                               <th scope="col">valid to</th>
+                               <th scope="col">minimum amount</th>
+                               <th scope="col">status</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                        {% for coupon in coupons %}
+                           
+                              <tr>
+                                 <th scope="row">{{forloop.counter}}</th>
+                                 <td>{{coupon.code}}</td>
+                                 <td>{{coupon.discount}}%</td>
+                                 <!-- <td style="width: 300px;">{{order.address.address}}</td> -->
+                                 <td>{{coupon.valid_from }}</td>
+                                 <td>{{coupon.valid_to}}</td>
+                                 <td>{{coupon.min_order}}</td>
+                                 <td>
+                                    {% if coupon.active%}
+                                    <a href="{% url 'deactivate_coupon' coupon.id %}" class="btn btn-dark btn-sm role="button">deactive</a>
+                                    {% else %}
+                                    <a href="{% url 'activate_coupon' coupon.id %}" class="btn btn-dark btn-sm role="button">active</a>
+                                    {% endif %}
+                                 </td>
+                                 <!-- <td><a href="" class="btn btn-dark btn-sm" role="button" >Edit</a></td> -->
+                             </tr>
+
+                        {% endfor %}   
+                       </tbody>
+                   </table>
+               </div>
+               <div class="pagination">
+                  <span class="step-links">
+                      {% if coupons.has_previous %}
+                          <a href="?page=1">&laquo; first</a>
+                          <a href="?page={{ coupons.previous_page_number }}">previous</a>
+                      {% endif %}
+              
+                      <span class="current">
+                          Page {{ coupons.number }} of {{ order_list.paginator.num_pages }}.
+                      </span>
+              
+                      {% if order_list.has_next %}
+                          <a href="?page={{ coupons.next_page_number }}">next</a>
+                          <a href="?page={{ coupons.paginator.num_pages }}">last &raquo;</a>
+                      {% endif %}
+                  </span>
+              </div>
+           </div>
+       </div>
+   </div>
+</div>
+<br><br><br><br><br>
+{% endblock %}

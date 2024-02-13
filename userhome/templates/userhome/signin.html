@@ -1,0 +1,53 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load socialaccount %}
+
+{% block content %}
+ <!--start page content-->
+<div class="page-content"> 
+    <!--start product details-->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row">
+              <div class="col-12 col-lg-6 col-xl-5 col-xxl-4 mx-auto">
+                 <div class="card rounded-0">
+                   <div class="card-body p-4">
+                     <h4 class="mb-0 fw-bold text-center">User Login</h4>
+                     <hr>
+                     <div class="separator mb-4">
+                    </div>
+                     <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy}}
+                        <div class="col-12">
+                          <a href="{% url 'forgott_password' %}" class="text-content btn bg-light rounded-0 w-100"><i class="bi bi-lock me-2"></i>Forgot Password</a>
+                        </div>
+                        <div class="col-12">
+                          <hr>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <button type="submit" class="btn btn-dark rounded-0 btn-ecomm w-100" >Sign In</button>
+                            
+                        </div>
+                     </form>
+                     <div class="line"></div>
+                        <p class="mb-0 fw-bold">Or</p>
+                      <div class="line"></div>
+                     <div>
+                        <div class="col-xl-12 mt-3">
+                          <a href="{% provider_login_url 'google' %}"  class="btn bg-pinterest btn-ecomm w-100 text-white" role="button"><i class="bi bi-google me-2"></i>Google</a>
+                        </div>
+                     </div>
+                   </div>
+                 </div>
+              </div>
+            </div><!--end row-->
+           
+        </div>
+      </section>
+ 
+ 
+  </div>
+   <!--end page content-->
+{% endblock %}

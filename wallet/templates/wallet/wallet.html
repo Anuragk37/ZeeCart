@@ -1,0 +1,203 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+
+<!-- {% block head %}
+<style>
+
+   .wallet-container {
+     max-width: 600px;
+     margin: 50px auto;
+     background-color: #ffffff;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+     border-radius: 10px;
+     padding: 30px;
+   }
+
+   .wallet-header {
+     text-align: center;
+     margin-bottom: 20px;
+   }
+
+   .wallet-balance {
+     font-size: 36px;
+     font-weight: bold;
+     color: #1e1e1e;
+     margin-bottom: 30px;
+     text-align: center;
+   }
+
+   .wallet-actions {
+     display: flex;
+     justify-content: space-between;
+     margin-top: 30px;
+   }
+
+   .btn-wallet {
+     width: 48%;
+   }
+
+   .deposit-form {
+     display: none;
+     margin-top: 20px;
+   }
+
+   .withdraw-form{
+      display: none;
+      margin-top: 20px;
+   }
+
+   .transaction-history {
+     margin-top: 50px;
+   }
+
+   .transaction-item {
+     border-bottom: 1px solid #dee2e6;
+     padding: 10px 0;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+   }
+
+   .transaction-item:last-child {
+     border-bottom: none;
+   }
+
+   .transaction-type {
+     font-weight: bold;
+   }
+
+   .transaction-amount {
+     color: #28a745;
+   }
+ </style>
+{% endblock %} -->
+
+{% block content %}
+<div class="page-content">
+  <div class="wallet-container">
+    <div class="wallet-header">
+      <h2 class="fw-bold">Zee Wallet</h2>
+    </div>
+
+    <div class="wallet-balance">
+      ₹{{wallet.balance}}
+    </div>
+
+    <div class="wallet-actions">
+      <button class="btn btn-dark btn-wallet" onclick="toggleDepositForm()">Add money</button>
+      <button class="btn btn-secondary btn-wallet" onclick="toggleWithdrawForm()">Withdraw</button>
+    </div>
+
+    <div class="deposit-form">
+      <div class="mb-3">
+        <label for="depositAmount" class="form-label">Enter amount to deposit:</label>
+        <input type="number" id="depositAmount" name="amount" autocomplete="off" class="form-control" required>
+      </div>
+      <button type="button" id="rzp-button1" class="btn btn-primary">Deposit</button>
+
+    </div>
+
+    <div class="withdraw-form">
+      <form id="withdrawForm" method="post" action="{% url 'withdraw' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="withdrawAmount" class="form-label">Enter amount to withdraw:</label>
+          <input type="number" id="amount" name="amount" autocomplete="off" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Withdraw</button>
+      </form>
+    </div>
+
+    <div class="transaction-history">
+      <a href="{% url 'transaction_history' %}">transaction history</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+$(document).ready(function () {
+    // Declare Razorpay object outside click event
+    var rzp1;
+
+    $('#rzp-button1').click(function (e) {
+        e.preventDefault();
+        var token = $("[name='csrfmiddlewaretoken']").val();
+
+        var depositAmount = $("#depositAmount").val();
+        if (depositAmount && !isNaN(depositAmount)) {
+
+            var options = {
+                "key": "rzp_test_lqF6UAHSfGt7OT",
+                "amount": depositAmount*100,
+                "currency": "INR",
+                "name": "Zee Wallet",
+                "description": "Test Transaction",
+                "image": "https://example.com/your_logo",
+                "handler": function (response) {
+                    var data = {
+                        "payment_id": response.razorpay_payment_id,
+                        'amount': depositAmount,
+                        csrfmiddlewaretoken: token
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "/user/add-amount/",
+                        data: data,
+
+                        success: function (response) {
+                           
+                            window.location.href = '/user/wallet/';
+                            Swal.fire({
+                              title: "Success !",
+                              text: response.message,
+                              icon: "success"
+                            });
+                            
+                        },
+                    });
+
+                },
+                "prefill": {
+                    "name": "Anurag ",
+                    "email": "anurag@gmail.com",
+                    "contact": "9898976463"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response) {
+                console.error(response.error);
+            });
+            rzp1.open();
+        } else {
+            console.log("invalid amount");
+        }
+    });
+
+    // You may want to handle cases where the user closes the checkout without completing the payment
+    $(window).on('unload', function () {
+        if (rzp1) {
+            rzp1.close();
+        }
+    });
+});
+
+  function toggleDepositForm() {
+    var depositForm = document.querySelector('.deposit-form');
+    depositForm.style.display = depositForm.style.display === 'none' || depositForm.style.display === '' ? 'block' : 'none';
+  }
+
+  function toggleWithdrawForm() {
+    console.log('hellooo')
+    var withdrawForm = document.querySelector('.withdraw-form');
+    withdrawForm.style.display = withdrawForm.style.display === 'none' || withdrawForm.style.display === '' ? 'block' : 'none';
+  }
+</script>
+{% endblock %}

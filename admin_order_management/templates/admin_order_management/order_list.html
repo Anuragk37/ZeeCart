@@ -1,0 +1,64 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4 mt-5">
+   <div class="row g-4">
+       <div class="col-12">
+           <div class="bg-light rounded h-100 p-4">
+               <h6 class="mb-4">Order Details</h6>
+               <div class="table-responsive">
+                   <table class="table table-bordered">
+                       <thead>
+                           <tr>
+                               <th scope="col">#</th>
+                               <th scope="col">order id</th>
+                               <th scope="col">customer</th>
+                               <!-- <th scope="col">address</th> -->
+                               <th scope="col">order date</th>
+                               <th scope="col">Amount</th>
+                               <th scope="col">Payment mehtod</th>
+                               <th scope="col">Action</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                        {% for order in order_list %}
+                           
+                              <tr style="height: 100px;">
+                                 <th scope="row">{{forloop.counter}}</th>
+                                 <td>{{order.id}}</td>
+                                 <td>{{order.user.first_name}}</td>
+                                 <!-- <td style="width: 300px;">{{order.address.address}}</td> -->
+                                 <td>{{order.order_date}}</td>
+                                 <td>{{order.total_amount}}</td>
+                                 <td>{{order.get_payment_method_display}}</td>
+                                 <td><a href="{% url 'order_details' order.id %} " class="btn btn-dark btn-sm" role="button" >view</a></td>
+                             </tr>
+
+                        {% endfor %}   
+                       </tbody>
+                   </table>
+               </div>
+               <div class="pagination">
+                  <span class="step-links">
+                      {% if order_list.has_previous %}
+                          <a href="?page=1">&laquo; first</a>
+                          <a href="?page={{ order_list.previous_page_number }}">previous</a>
+                      {% endif %}
+              
+                      <span class="current">
+                          Page {{ order_list.number }} of {{ order_list.paginator.num_pages }}.
+                      </span>
+              
+                      {% if order_list.has_next %}
+                          <a href="?page={{ order_list.next_page_number }}">next</a>
+                          <a href="?page={{ order_list.paginator.num_pages }}">last &raquo;</a>
+                      {% endif %}
+                  </span>
+              </div>
+           </div>
+       </div>
+   </div>
+</div>
+<br><br><br><br><br>
+{% endblock %}

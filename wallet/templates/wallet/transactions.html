@@ -1,0 +1,94 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+
+{% block head %}
+<style>
+   /* Add your custom styles here */
+   .table-container {
+      overflow-x: auto;
+      overflow-y: hidden; 
+   }
+
+   .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+   }
+
+   .pagination-container a {
+      padding: 8px;
+      margin: 3px 4px;
+      text-decoration: none;
+      border: 1px solid #ddd;
+      color: #333;
+   }
+
+   .pagination-container .current {
+      padding: 8px;
+      margin: 3px 4px;
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid #4CAF50;
+   }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-content">
+   <div class="container mt-4">
+      <h2 class="text-center mb-4">Transaction History</h2>
+      {% if transactions%}
+      <div class="table-container">
+
+         <table class="table table-striped">
+            <thead>
+               <tr>
+                  <th>Transaction ID</th>
+                  <th>Amount</th>
+                  <th>Transaction Type</th>
+                  <th>Date</th>
+               </tr>
+            </thead>
+            <tbody>
+               {% for transaction in transactions %}
+               <tr>
+                  <td>{{ transaction.id }}</td>
+                  <td>{{ transaction.amount }}</td>
+                  <td>{{ transaction.transaction_type }}</td>
+                  <td>{{ transaction.date }}</td>
+               </tr>
+               {% endfor %}
+            </tbody>
+         </table>
+
+         <!-- Pagination -->
+         <div class="pagination-container mt-4">
+            <span class="step-links">
+               {% if transactions.has_previous %}
+                  <a href="?page=1">&laquo; first</a>
+                  <a href="?page={{ transactions.previous_page_number }}">previous</a>
+               {% endif %}
+
+               <span class="current">
+                  Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}.
+               </span>
+
+               {% if transactions.has_next %}
+                  <a href="?page={{ transactions.next_page_number }}">next</a>
+                  <a href="?page={{ transactions.paginator.num_pages }}">last &raquo;</a>
+               {% endif %}
+            </span>
+         </div>
+
+      </div>
+      {% else %}
+      <div class="text-center mt-4">
+         <h2>No transactions yet!</h2>
+      </div>
+      {% endif %}
+   </div>
+
+</div>
+
+{% endblock %}

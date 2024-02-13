@@ -1,0 +1,71 @@
+{% extends "adminhome/base.html" %}
+{% load static %}
+
+
+{% block content %}
+ <!-- Sale & Revenue Start -->
+ <div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4" style="min-height: 150px;">
+                <i class="fa fa-chart-line fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2" style="font-size: 18px;">Total Items Ordered</p>
+                    <h6 class="mb-0" style="font-size: 22px;">{{order_items}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4" style="min-height: 150px;">
+                <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2" style="font-size: 18px;">Total orders</p>
+                    <h6 class="mb-0" style="font-size: 22px;">{{orders_count}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4" style="min-height: 150px;">
+                <i class="fa fa-chart-area fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2" style="font-size: 18px;">Total users</p>
+                    <h6 class="mb-0" style="font-size: 22px;">{{user_count}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4" style="min-height: 150px;">
+                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2" style="font-size: 18px;">Total Revenue</p>
+                    <h6 class="mb-0" style="font-size: 22px;">{{total_revenue}}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-sm-12 col-xl-3 pt-5">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4 mt-5" >
+                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-0" style="font-size: 18px;">Order Delivered</p>
+                    <h6 class="mb-0" style="font-size: 22px;">{{order_delevered}}</h6>
+                </div>
+            </div>
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4 mt-5">
+                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-0" style="font-size: 18px;">Order pending</p>
+                    <h6 class="mb-0" style="font-size: 22px;">{{order_pending}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-xl-9">
+            {{ plot_html|safe }}
+        </div>
+    </div>
+</div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<!-- Sale & Revenue End -->
+{% endblock %}

@@ -1,0 +1,308 @@
+{% extends 'userhome/base.html' %}
+{% load static%}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="page-content">
+
+<!--start product grid-->
+    <!-- Start product grid -->
+<section class="py-4">
+    <h5 class="mb-0 fw-bold d-none">Product Grid</h5>
+    <div class="container">
+        <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbarFilter">
+            <span><i class="bi bi-funnel me-1"></i> Filters</span>
+        </div>
+        <div class="row">
+            <!-- Filter Column -->
+            <div class="col-12 col-xl-3 filter-column">
+                <nav class="navbar navbar-expand-xl flex-wrap p-0">
+                    <!-- Offcanvas Navbar Filter -->
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarFilter"
+                        aria-labelledby="offcanvasNavbarFilterLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title mb-0 fw-bold text-uppercase" id="offcanvasNavbarFilterLabel">Filters</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div class="filter-sidebar">
+                                <!-- Filter Form (Commented Out)
+                                <form action="" method="post" id="filterForm">
+                                    {% csrf_token %}
+                                -->
+                                <div class="card rounded-0">
+                                    <div class="card-header d-none d-xl-block bg-transparent">
+                                        <h5 class="mb-0 fw-bold">Filters</h5>
+                                    </div>
+                                    <!-- Categories -->
+                                    {% if categories %}
+                                    <div class="card-body">
+                                        <h6 class="p-1 fw-bold bg-light">Categories</h6>
+                                        <div class="categories">
+                                            <div class="categories-wrapper height-1 p-1">
+                                                {% for category in categories %}
+                                                <div class="form-check">
+                                                    <input class="form-check-input filter-checkbox" data-filter="category"
+                                                        type="checkbox" value="{{category.id}}" name="category" id="chekCate">
+                                                    <label class="form-check-label" for="chekCate">
+                                                        <span>{{category.category_name}}</span>
+                                                    </label>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <hr>
+                                    <!-- Brands -->
+                                    {% if brands %}
+                                    <div class="brands">
+                                        <h6 class="p-1 fw-bold bg-light">Brands</h6>
+                                        <div class="brands-wrapper height-1 p-1">
+                                            {% for brand in brands %}
+                                            <div class="form-check">
+                                                <input class="form-check-input filter-checkbox" data-filter="brand"
+                                                    type="checkbox" value="{{brand.id }}" name="brand" id="chekBrand">
+                                                <label class="form-check-label" for="chekBrand">
+                                                    <span>{{brand.brand_name}}</span>
+                                                </label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <hr>
+                                    <!-- Price -->
+                                    <div class="Price">
+                                        <h6 class="p-1 fw-bold bg-light">Price</h6>
+                                        <div class="Price-wrapper p-1">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control rounded-0" name="low" autocomplete="off"
+                                                    placeholder="min">
+                                                <span class="input-group-text bg-section-1 border-0">-</span>
+                                                <input type="text" class="form-control rounded-0" name="high"
+                                                    autocomplete="off" placeholder="max">
+                                                <button type="button" class="btn btn-outline-dark rounded-0 ms-2 btn-price-filter">Apply</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <!-- Discount Range -->
+                                    <div class="discount">
+                                        <h6 class="p-1 fw-bold bg-light">Discount Range</h6>
+                                        <div class="discount-wrapper p-1">
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="10" id="chekDisc1">
+                                                <label class="form-check-label" for="chekDisc1">
+                                                10% and Above
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="20" id="chekDisc2">
+                                                <label class="form-check-label" for="chekDisc2">
+                                                20% and Above
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="30" id="chekDisc3">
+                                                <label class="form-check-label" for="chekDisc3">
+                                                30% and Above
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="40" id="chekDisc4">
+                                                <label class="form-check-label" for="chekDisc4">
+                                                40% and Above
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="50" id="chekDisc5">
+                                                <label class="form-check-label" for="chekDisc5">
+                                                50% and Above
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="60" id="chekDisc6">
+                                                <label class="form-check-label" for="chekDisc6">
+                                                60% and Above
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="70" id="chekDisc7">
+                                                <label class="form-check-label" for="chekDisc7">
+                                                70% and Above
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input discount-filter" name="exampleRadios" type="radio" value="80" id="chekDisc8">
+                                                <label class="form-check-label" for="chekDisc8">
+                                                80% and Above
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Filter Form (Commented Out)
+                                </form>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <!-- Products Column -->
+            <div class="col-12 col-xl-9">
+                <div class="shop-right-sidebar">
+                    <div class="card rounded-0">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center justify-content-between bg-light p-2">
+                                <div class="product-count">{{products.count}} items found</div>
+                                <div class="view-type hstack gap-2 d-none d-xl-flex">
+                                    <!-- Add your view-type buttons here -->
+                                </div>
+                                <form>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent rounded-0 border-0">Sort By</span>
+                                        <select class="form-select rounded-0" id="sortSelect">
+                                            <option selected>What's New</option>
+                                            <option value="1">Price: High to Low</option>
+                                            <option value="2">Price: Low to High</option>
+                                            <!-- Add your sorting options here -->
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product Grid -->
+                    <div class="product-grid mt-4">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="filtered-products">
+                            <!-- Product Cards -->
+                            {% for product in products %}
+                            <div class="col">
+                                <div class="card border shadow-none" style="height: 300px;">
+                                    <div class="position-relative overflow-hidden">
+                                        <div class="product-options d-flex align-items-center justify-content-center gap-2 mx-auto position-absolute bottom-0 start-0 end-0">                                            
+                                                
+                                            {% if product in wishlist_products %}
+                                                <a href="{% url 'wishlist_cart:wishlist_remove' product.id %}"><i class="bi bi-heart-fill"></i></a>    
+                                            {% else %}
+                                                <a href="{% url 'user_products:add_wishlist' product.id %}"><i class="bi bi-heart"></i></a>
+                                            {% endif %}
+                                                
+                                            <a href="{% url 'user_products:add_cart' product.product_varient.first.id %}"><i class="bi bi-basket3"></i></a>
+                                        </div>
+                                        <!-- Product Images -->
+                                        {% for product_varient in product.product_varient.all %}
+                                        {% for product_image in product_varient.product_images.all|slice:":1" %}
+                                        <a href="{% url 'user_products:product_detail' product.id %}">
+                                            <img src="{{ product_image.image.url }}" style="width: 100%; height: 100%;" alt="...">
+                                        </a>
+                                        {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                    <!-- Product Details -->
+                                    <div class="card-body border-top">
+                                        <h5 class="mb-0 fw-bold product-short-title">{{ product.product_name }}</h5>
+                                        <!-- Product Price -->
+                                        <div class="product-price d-flex align-items-center gap-2 mt-2">
+                                            {% if product.offer_price %}
+                                            <div class="h6 fw-bold">₹{{ product.offer_price }}</div>
+                                            <div class="h6 fw-light text-muted text-decoration-line-through">₹{{ product.price }}</div>
+                                            {% if product.offer.first%}
+                                            <div class="h6 fw-bold text-danger">({{product.offer.first.discount}}% off)</div>
+                                            {% else %}
+                                            <div class="h6 fw-bold text-danger">({{product.category.category_offer.first.discount}}% off)</div>
+                                            {% endif %}
+                                            {% else %}
+                                            <div class="h6 fw-bold">₹{{ product.price }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div><!-- End Row -->
+                    </div><!-- End Product Grid -->
+                </div>
+            </div><!-- End Products Column -->
+        </div><!-- End Row -->
+    </div><!-- End Container -->
+</section><!-- End Product Grid Section -->
+
+   <!--start product details-->
+
+
+  
+  
+ </div>
+  <!--end page content-->
+
+
+
+
+{% endblock %} 
+
+{% block script %}
+<script>
+    $(".filter-checkbox, .btn-price-filter, .discount-filter").off("click").on("click", function () {
+      console.log("A checkbox have been clicked ")
+
+      let filter_objects = {}
+      $(".filter-checkbox").each(function () {
+         let filter_value = $(this).val()
+         let filter_key = $(this).data("filter")
+
+         filter_objects[filter_key] = Array.from(document.querySelectorAll('input[data-filter=' + filter_key + ']:checked')).map(function (element) {
+            return element.value
+         })
+      })
+
+      let discount = $("input[name='exampleRadios']:checked").val();
+
+      console.log(discount)
+
+      let lowPrice = $("input[name='low']").val();
+      let highPrice = $("input[name='high']").val();
+
+      filter_objects['discount'] = discount;
+      filter_objects['low_price'] = lowPrice;
+      filter_objects['high_price'] = highPrice;
+      console.log(filter_objects)
+      $.ajax({
+         url: "{% url 'user_products:filter_products' %}",
+         data: filter_objects,
+         dataType: 'json',
+         beforeSend: function () {
+            console.log("sending")
+            console.log('hello')
+         },
+         success: function (response) {
+            $("#filtered-products").html(response.data)
+            console.log(response)
+         }
+      })
+   })
+   $('#sortSelect').change(function () {
+            // Get the selected sorting parameter
+            var sortParam = $(this).val();
+
+            
+            $.ajax({
+                url: "{% url 'user_products:sort_products' %}",
+                data: { 'sort_param': sortParam },
+                dataType: 'json',
+                beforeSend: function () {
+                    console.log("sending")
+                },
+                success: function (response) {
+                    $("#filtered-products").html(response.data)
+                    console.log(response)
+                }
+            });
+        });
+</script>
+{% endblock %}

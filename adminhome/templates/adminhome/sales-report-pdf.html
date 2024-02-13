@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 40px;
+        }
+
+        h1 {
+            font-size: x-large;
+            text-align: center; /* Center the h1 element */
+        }
+
+        .sales-report {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .sales-report th, .sales-report td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .top-products {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .top-products th, .top-products td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Sales Report</h1>
+
+    <div style="overflow-x:auto;">
+        <table class="sales-report">
+            <!-- <tr>
+                <th>Period</th>
+                <td>Today</td>
+            </tr> -->
+            <tr>
+                <th>Total Orders</th>
+                <td>{{ order_count }}</td>
+            </tr>
+            <tr>
+                <th>Total Revenue</th>
+                <td>₹{{ total_revenue }}</td>
+            </tr>
+            <tr>
+                <th>Total Order Items</th>
+                <td>{{ order_items_count }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Top 5 Selling Products</h3>
+    <table class="top-products">
+        <tr>
+            <th>Product Name</th>
+            <th>Total Quantity Sold</th>
+        </tr>
+        {% for product in top_products %}
+        <tr>
+            <td>{{ product.product_varient__product__product_name }}</td>
+            <td>{{ product.total_quantity }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Top order items</h3>
+    <table class="top-products">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product</th>
+            <th scope="col">Vareint</th>
+            <th scope="col">Price</th>
+            <th scope="col">Order id</th>
+        </tr>
+        {% for product in order_products %}
+        <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{product.product_varient.product.product_name}}</td>
+            <td>{{product.product_varient.color}}</td>
+            <td>₹{{product.price}}</td>
+            <td>{{product.order.id}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>
+

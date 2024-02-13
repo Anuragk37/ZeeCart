@@ -1,0 +1,155 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-content">
+   <section class="section-padding">
+      <div class="container">
+         <div class="d-flex align-items-center px-3 py-2 border mb-4">
+            <div class="text-start">
+               <h4 class="mb-0 h4 fw-bold">Choose address</h4>
+            </div>
+
+         </div>
+         <div class="row g-4">
+            <div class="col-12 col-xl-8">
+               <div class="card rounded-0 mb-3">
+                  <div class="card-body">
+                     <div class="d-flex flex-column flex-lg-row gap-3">
+                        <div class="product-img">
+                           <img src="{{ product_varient.product_images.first.image.url }}" width="150" alt="">
+
+                        </div>
+                        <div class="product-info flex-grow-1">
+                           <h5 class="fw-bold mb-0">{{product_varient.product.product_name}}</h5>
+                           <h6 class="fw-bold mb-0">Color : {{product_varient.color }}</h6>
+                           <div class="product-price d-flex align-items-center gap-2 mt-3">
+                              <div class="h6 fw-bold">₹{{product_varient.product.offer.first.discount_price }}</div>
+
+                              <div class="h6 fw-light text-muted text-decoration-line-through">
+                                 ₹{{product_varient.product.price}}</div>
+                              <div class="h6 fw-bold text-danger">
+                                 ({{product_varient.product.offer.first.discount}}% off)</div>
+                           </div>
+
+                           <div class="mt-3 hstack gap-2 form-outline">
+                              <label for="quantity">Qnt</label>
+                              <button type="button" class="btn-quantity" id="decrease"
+                                 value="{{product_varient.id}}">-</button>
+                              <input type="number" name="quantity" min="1" max="100" value="{{quantity}}" required
+                                 id="">
+                              <button type="button" class="btn-quantity" id="increase"
+                                 value="{{item.product_varient.id}}">+</button>
+                           </div>
+                        </div>
+                        <div class="d-none d-lg-block vr"></div>
+                        <div class="d-grid gap-2 align-self-start align-self-lg-center">
+                           <a href="" role="button"
+                              class="btn btn-ecomm">Remove</a>
+                           <button type="button" class="btn dark btn-ecomm"><i class="bi bi-suit-heart me-2"></i>Move to
+                              Wishlist</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+            </div>
+            <div class="col-12 col-xl-4">
+               <div class="card rounded-0 mb-3">
+                  <div class="card-body">
+                     <h5 class="fw-bold mb-4">Order Summary</h5>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Price</p>
+                        <p class="mb-0">₹<span id="cart-price">{{request.session.product_data.product_price}}</span></p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">discount</p>
+                        <p class="mb-0 text-success"><span id="discount">{{discount}}</span></p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Delivery</p>
+                        <p class="mb-0"><span id="delivery-charge">₹{{delivery_charge}}</span></p>
+                     </div>
+                     <hr>
+                     <div class="hstack align-items-center justify-content-between fw-bold text-content">
+                        <p class="mb-0">Total Amount</p>
+                        <p class="mb-0">₹<span id="total-price">{{total_amount}}</span></p>
+                     </div>
+                     <div class="d-grid mt-4">
+                        <a href="{% url 'checkout_address' %}" role="button" id="btn-order-place"  class="btn btn-dark btn-ecomm py-3 px-5" >Place Order</a>
+                     </div>
+                  </div>
+               </div>
+               <div class="card rounded-0">
+                  <div class="card-body">
+                     <h5 class="fw-bold mb-4">Apply Coupon</h5>
+                     <div class="input-group">
+                        <input type="text" class="form-control rounded-0" placeholder="Enter coupon code">
+                        <button class="btn btn-dark btn-ecomm rounded-0" type="button">Apply</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div><!--end row-->
+      </div>
+   </section>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+   $(document).ready(function(){
+      $(".btn-quantity").on("click",function(){
+         console.log("btn clicked")
+         
+         let qntInput = $(this).siblings('input[name="quantity"]');
+         let quantity = parseInt(qntInput.val());
+
+         if ($(this).attr('id') === 'increase') {
+            quantity++;
+         } else if ($(this).attr('id') === 'decrease' && quantity > 1) {
+            quantity--;
+         }
+
+         qntInput.val(quantity);
+
+         console.log(quantity)
+         
+
+
+         $.ajax({
+            url: "{% url 'quantity_update' %}",
+            data: {'quantity':quantity},
+            dataType: 'json',
+            beforeSend: function(){
+               console.log("sending")
+            },
+            success:function(response){
+
+               document.getElementById("total-price").innerText=response.total_amount
+               document.getElementById("discount").innerText=response.discount
+               document.getElementById("cart-price").innerText=response.product_price 
+               document.getElementById("delivery-charge").innerText=response.delivery_charge
+
+               if (qnt >= response.stock) {
+                     $("#increase[value='" + product_id + "']").prop('disabled', true);
+                  
+               } else {
+                     $("#increase[value='" + product_id + "']").prop('disabled', false);
+               }           
+                         
+            }
+         }) 
+
+      })
+      $("#btn-order-place").on("click",function(){
+         console.log("order clicked")
+         let total_amount = $(this).val();
+         console.log(total_amount)
+      })
+
+
+   })
+</script>
+{% endblock %}

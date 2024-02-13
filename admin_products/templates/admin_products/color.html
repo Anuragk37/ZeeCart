@@ -1,0 +1,56 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4 align-items-center justify-content-center">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Basic Form</h6>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{form|crispy}}                   
+                    <button type="submit" class="btn btn-primary">Save</button>            
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<div class="container-fluid pt-4 px-4 mt-5">
+    <div class="row g-4" style="width: 500px;">                   
+        <div class="col-12">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Color Table</h6>
+                <div class="table-responsive" >
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">sl.no</th>
+                                <th scope="col">color</th>
+                                <th scope="col">Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in color %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{c.color}}</td>
+                                <td>
+                                    <a href="{%url 'delete_color' c.id%}" class="btn btn-secondary btn-sm" tabindex="-1" role="button" >Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock%}

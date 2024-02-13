@@ -1,0 +1,81 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+
+{% block content %}
+<div class="container mt-3 p-5">
+   <div class="mb-4 shadow p-5">
+      <h4>{{ product.product_name }}</h4>
+      <table class="table table-bordered mt-3">
+          <tbody>
+              <tr>
+                  <th scope="row" class="table-secondary">Description</th>
+                  <td>{{ product.description }}</td>
+              </tr>
+              <tr>
+                  <th scope="row" class="table-secondary">Price</th>
+                  <td>₹{{ product.price }}</td>
+              </tr>
+              <tr>
+                  <th scope="row" class="table-secondary">Offer Price</th>
+                  <td>₹{{ product.offer_price }}</td>
+              </tr>
+              <tr>
+                  <th scope="row" class="table-secondary">Type</th>
+                  <td>{{ product.category }}</td>
+              </tr>
+              <tr>
+                  <th scope="row" class="table-secondary">Brand</th>
+                  <td>{{ product.brand }}</td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+  
+  
+
+
+   <div class="table-responsive">
+      <h4>Varients</h4>
+      <table class="table table-bordered">
+         <thead>
+            <tr>
+               <th scope="col">sl.no</th>
+               <th scope="col">Vareint</th>
+               <th scope="col">Stock</th>
+               <th scope="col">Images</th>
+               <th scope="col">Action</th>
+
+            </tr>
+         </thead>
+         <tbody>
+            {% for varient in product.product_varient.all %}
+            <tr>
+               <th scope="row">{{ forloop.counter }}</th>
+               <td>{{varient.color}}</td>
+               <td>{{varient.stock}}</td>
+               <td>
+                  {% for image in varient.product_images.all %}
+                  <div class="item me-3" style="width: 120px; height: 120px; display: inline-block; position: relative;">
+                    <img src="{{ image.image.url }}" style="height: 100%; width: 100%;" alt="Product Image">
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_image' image.id %}" role="button" class="btn btn-sm btn-danger delete-button" style="position: absolute; top: 0; right: 0;">
+                        <i class="bi bi-trash"></i> 
+                    </a>
+                    </div>
+                
+                  {% endfor %}
+              </td>
+               <td>
+                  <a href="{% url 'delete_product_varient' varient.id%}" class="btn btn-secondary btn-sm"
+                     role="button">Delete</a>
+               </td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+   </div>
+</div>
+
+
+{% endblock %}

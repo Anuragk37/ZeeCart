@@ -1,0 +1,166 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+
+{% block content %}
+
+
+<div class="container-fluid pt-4 px-4 mt-5">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <!-- Content in the first column (if any) -->
+    </div>
+    <div class="col-md-6 d-flex justify-content-center ">
+
+      <form action="{% url 'update_status' order.id %}" method="post" class="d-flex">
+        {% csrf_token %}
+        <div class="me-2">
+          <label for="order-status" class="form-label">Order Status:</label>
+          <select name="order-status" id="order-status" class="form-select form-select-sm" style="width: 150px;">
+            <option value="{{ order.order_status }}" selected>{{ order.order_status }}</option>
+            <option value="Pending">Pending</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-dark btn-sm ml-auto mt-auto" style="height: 30px;">Update</button>
+      </form>
+    </div>
+
+
+  </div>
+
+
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card shadow">
+        <div class="card-body">
+          <h5 class="card-title">User</h5>
+          <hr>
+          <p class="card-text">Name : &nbsp; {{order.user.first_name}}</p>
+          <p class="card-text">Email :&nbsp; {{order.user.email}}</p>
+          <p class="card-text">Phone No: &nbsp; {{order.user.phone_no}}</p>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="card shadow">
+        <div class="card-body" style="line-height: 20px;">
+          <h5 class="card-title">Address</h5>
+          <p class="card-text">{{order.address.name}}</p>
+          <p class="card-text">{{order.address.address}}</p>
+          <p class="card-text">{{order.address.city}},{{order.address.state}}</p>
+          <p class="card-text">{{order.address.pincode}}</p>
+          <p class="card-text">phone no : {{order.address.phone_no}}</p>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow">
+        <div class="card-body">
+          <h5 class="card-title">Payment</h5>
+          <hr>
+          <p class="card-text">Method : &nbsp; {{order.get_payment_method_display}}</p>
+          <p class="card-text">Total amount :&nbsp; {{order.total_amount}}</p>
+          <p class="card-text">Payment status: &nbsp; {{order.payment_status}}</p>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-4">
+    <div class="col-12">
+      <div class="bg-light rounded h-100 p-4">
+        <h6 class="mb-4">Order Details</h6>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Sl No</th>
+                <th scope="col">Product</th>
+                <th scope="col">Varient</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Payment</th>
+                <th scope="col">Status</th>
+                <th scope="col">Return</th>
+                
+                <th scope="col">Refund</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in order_products %}
+
+              <tr style="height: 70px;">
+                <th scope="row">{{forloop.counter}}</th>
+                <td>{{product.product_varient.product.product_name}}</td>
+                <td>{{product.product_varient.color}}</td>
+                <td>{{product.quantity}}</td>
+                <td>{{product.price}}</td>
+                <td>{{product.payment_status}}</td>
+                <td>
+                  {% if product.order_status == 'Canceled' %}
+                  <p style="color: orangered;">canceled</p>
+                  {% else %}
+                  <form action="{% url 'update_status' product.id %}" method="post" class="d-flex">
+                    {% csrf_token %}
+                    <div class="me-2">
+                      <select name="order-status" id="order-status" class="form-select form-select-sm"
+                        style="width: 150px;">
+                        <option value="{{ product.order_status }}" selected>{{ product.order_status }}</option>
+                        <option value="Confiremed">Confiremed</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Canceled">Cancel</option>
+                      </select>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-dark btn-sm ml-auto mt-auto"
+                      style="height: 30px;">Update</button>
+                  </form>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if product.return_status == 'Request' %}
+                  <a href="{% url 'return_request_accept' product.id %}">Accept</a>
+                  <a href="{% url 'return_request_reject' product.id %}">Reject</a>
+                  {% elif product.return_status == 'Accepted' and not product.is_returned %}
+                  <a href="{% url 'return_order' product.id %}">Return</a>
+                  {% elif product.return_status == 'Rejcted' %}
+                  <p>Regected</p>
+                  {% elif product.is_returned%}
+                  <p> item retured </p>
+                  {% endif %}
+                </td>
+                {% if product.order_status == 'Canceled' %}
+                <td>
+                  {% if product.order.payment_method == 'Wallet' or product.order.payment_method == 'Online_Payment' %}
+                  {% if not product.is_refunded %}
+                  <a href="{% url 'refund_details' product.id %}" class="btn btn-dark btn-sm ml-auto mt-auto"
+                    role="button">Refund</a>
+                  {% else %}
+                  refunded
+                  {% endif %}
+                  {% endif %}
+                </td>
+                {% endif %}
+
+
+              </tr>
+
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

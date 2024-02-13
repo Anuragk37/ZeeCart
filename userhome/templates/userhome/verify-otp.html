@@ -1,0 +1,34 @@
+{% extends "userhome/base.html" %}
+{% load static %}
+
+
+
+{% block content %}
+<div class="page-content"> 
+    <!--start product details-->
+    <section class="section-padding">
+     <div class="container">
+        
+        <form action="" method="post" class="col-md-6 mx-auto bg-white p-4 rounded shadow-sm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="entered_otp">Enter the OTP</label>
+                <input type="text" name="entered_otp" id="entered_otp" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success mt-5">Submit</button>
+            <a href="{% url 'resend_otp' %}">Resend Otp</a>
+        </form>
+
+        
+     </div>
+   </section>
+    <!--start product details-->
+ 
+ 
+  </div>
+   <!--end page content-->
+
+
+{% endblock %}
+
+

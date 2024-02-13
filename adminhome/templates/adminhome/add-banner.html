@@ -1,0 +1,26 @@
+{% extends "adminhome/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+{% block content %}
+
+<div class="container-fluid pt-4 px-4">
+   <div class="row g-4 align-items-center justify-content-center">
+       <div class="col-sm-12 col-xl-6">
+           <div class="bg-light rounded h-100 p-4">
+               <h6 class="mb-4">Basic Form</h6>
+               <form action="" method="post" enctype="multipart/form-data">
+                   {% csrf_token %}
+                   {{form|crispy}}
+                   <button type="submit" class="btn btn-primary">Save</button>
+               
+               </form>
+           </div>
+       </div>
+       
+   </div>
+</div>
+
+{% endblock %}

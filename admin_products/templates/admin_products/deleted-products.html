@@ -1,0 +1,51 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+
+{% block content %}
+<div class="container mt-5 p-5">
+    <h2 class="text-center mb-4">Product Details</h2>
+    <a href="{% url 'products' %}" class="btn btn-secondary btn-sm mb-2 " role="button">Products</a>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">sl.no</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Brand</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Varient & stock </th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Offer Price</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{product.product_name}}</td>
+                    <td>{{product.brand.brand_name}}</td>
+                    <td>{{product.category.category_name}}</td>
+                    <td>
+                        {% for varient in product.product_varient.all %}
+                        {{varient.color.color}} -- {{varient.stock}} <br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% with first_image=product.product_varient.first.product_images.first %}                           
+                                <img src="{{ first_image.image.url }}" alt="no image found" style="width: 150px; height: 150px;">                            
+                        {% endwith %}
+                    </td>
+                    <td>{{ product.price}}</td>
+                    <td>{{ product.offer.first.discount_price }}</td>
+                    <td>
+                        <a href="{% url 'restore_product' product.id%}" class="btn btn-secondary btn-sm" role="button">Restore</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

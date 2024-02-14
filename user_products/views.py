@@ -11,15 +11,17 @@ from userhome.models import *
 
 
 # Create your views here.
-def products_list(request, bid=None, cid=None):
-    if cid:
-        products = Products.objects.filter(category__id=bid, is_deleted=False)
-        brands = Brand.objects.all()
-        categories = None
-    elif bid:
-        products = Products.objects.filter(brand__id=bid, is_deleted=False)
+def products_list(request, type=None, id=None):
+    if type == 'brand':
+        print("Brand")
+        products = Products.objects.filter(brand__id=id, is_deleted=False)
         categories = Category.objects.all()
         brands = None
+    elif type == 'category':
+        print("Category")
+        products = Products.objects.filter(category__id=id, is_deleted=False)
+        brands = Brand.objects.all()
+        categories = None
     else:
         products = Products.objects.filter(is_deleted=False)
         categories = Category.objects.all()
@@ -30,18 +32,12 @@ def products_list(request, bid=None, cid=None):
     if request.user.is_authenticated:
         user = request.user
         wishlist_items = user.wishlist.all()
-        wishlist_products = []
-        for items in wishlist_items:
-            wishlist_products.append(items.product)
+        wishlist_products = [items.product for items in wishlist_items]
 
-        context = {
-            "products": products,
-            "categories": categories,
-            "brands": brands,
-            "wishlist_products": wishlist_products,
-        }
+        context["wishlist_products"] = wishlist_products
 
     return render(request, "user_products/products-list.html", context)
+
 
 
 def product_detail(request, pid):

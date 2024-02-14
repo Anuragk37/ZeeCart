@@ -11,11 +11,8 @@ class BlockMiddleware:
 
     def __call__(self, request):
         if request.user.is_authenticated:
-            print("meeeee")
             user = request.user
-            print(user)
             if not user.is_active and not user.is_admin:
-                print("hhhh", user)
                 logout(request)
 
         response = self.get_response(request)

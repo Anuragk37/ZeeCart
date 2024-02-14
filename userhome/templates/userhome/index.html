@@ -54,7 +54,7 @@
         <h6 class="large-menu-title">Watchs</h6>
         <ul class="list-unstyled">
           {% for category in categories %}
-          <li><a href="{% url 'user_products:category_products' category.id %}">{{category.category_name}}</a>
+          <li><a href="{% url 'user_products:products_list' id=category.id type='category' %}">
           </li>
           {% endfor %}
         </ul>
@@ -194,7 +194,7 @@
           <div class="col">
             <div class="p-3 border rounded brand-box">
               <div class="d-flex align-items-center">
-                <a href="{% url 'user_products:brand_products' brand.id %}">
+                <a href="{% url 'user_products:products_list' id=brand.id type='brand' %}">
                   <img src="{{brand.brand_image.url}}" class="img-fluid"
                     style="width: 100%; height: 130px; object-fit:fit" alt="">
                 </a>
@@ -221,7 +221,7 @@
 
       <div class="cartegory-box">
         {% for category in categories %}
-        <a href="{% url 'user_products:category_products' category.id %}">
+        <a href="{% url 'user_products:products_list' id=category.id type='category' %}">
           <div class="card">
             <div class="card-body">
               <div class="overflow-hidden">

@@ -11,7 +11,7 @@ from django.utils import timezone
 @login_required(login_url="admin_login")
 def view_order_list(request):
     if request.user.is_admin:
-        order_list = Order.objects.all().order_by("id")
+        order_list = Order.objects.all().order_by("-id")
         items_per_page = 10
         paginator = Paginator(order_list, items_per_page)
         page = request.GET.get("page")

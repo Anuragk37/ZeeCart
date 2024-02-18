@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from coupon_banner.models import Coupon,UserCoupon
 from wallet.models import *
 from wishlist_cart.models import Cart
 from .models import*
@@ -47,27 +48,29 @@ def checkout_payment(request):
    if request.method == 'POST':
       address_id=request.POST['address']
       request.session['selected-address']=address_id      
-
-
       price=request.session.get('order_data')['total_amount']
-      print(price)
-
-
 
    order_data=request.session.get('order_data')
 
    form=PaymentMethodForm()
 
    coupons = request.session.get('applied_coupons', [])
+   coupon_discount=0
+   if request.session.get('applied_coupons'):
+      applied_coupons=request.session.get('applied_coupons')
+      for coupon in applied_coupons:
+         c=Coupon.objects.get(code=coupon)
+         used_coupon=UserCoupon.objects.get(user=request.user,coupon=c.id)
+         coupon_discount=coupon_discount+used_coupon.reduced_price
 
-   return render(request,'user_order/checkout-payment.html',{'form':form,'order_data':order_data,'coupons':coupons})
+   return render(request,'user_order/checkout-payment.html',{'form':form,'order_data':order_data,'coupons':coupons,'coupon_discount':coupon_discount})
        
 # @login_required(login_url='signin')
 # def payment_options(request):
 #    if request.user.is_authenticated:
 #       user=request.user
 #       address_id=request.session.get('selected-address')
-#       print(address_id)
+
 #       address=Address.objects.get(id=address_id)
 #       total_amount=request.session['order_data']['total_amount']
 #       order_items=Cart.objects.filter(user=user)
@@ -85,7 +88,7 @@ def checkout_payment(request):
    
 @login_required(login_url='signin')
 def cash_on_delivery(request):
-   try:
+   try: 
       user=request.user
       address_id=request.session.get('selected-address')
       selected_address=Address.objects.get(id=address_id)
@@ -168,7 +171,7 @@ def wallet_payment(request):
          messages.error(request, 'insuffisient balance in your wallet')
          return redirect('checkout_payment')
    except Exception as e:
-      print(str(e))
+
       messages.error(request, f'Error placing order: {str(e)}')
       return redirect('checkout_payment') 
    
@@ -251,7 +254,7 @@ def online_payment(request):
 def order_list(request):
     if request.user.is_authenticated:
       user=request.user
-      orders=Order.objects.filter(user=user)
+      orders=Order.objects.filter(user=user).order_by('-id')
       order_items=[]
       for order in orders:
          order_items.extend(OrderItems.objects.filter(order=order).order_by('order__order_date'))
@@ -355,7 +358,6 @@ def order_detail(request,orderitem_id):
       day=0
       if order_item.order_status == 'Delivered':
          day=(timezone.now()-order_item.delivery_date).days
-         print(day)
       order=order_item.order
       return render(request,'user_order/order-details.html',{'order':order,'order_item':order_item,'day':day})
    else:

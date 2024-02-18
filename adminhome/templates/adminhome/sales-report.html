@@ -394,6 +394,7 @@
                 </div>
             </div>
         </div>
+        <div id="order-products-table"></div>
     </div>
     
 
@@ -523,6 +524,25 @@
             topProductsHTML += '</div>';
         }
         document.getElementById("top-products").innerHTML = topProductsHTML;
+
+        var orderProductsTableHTML = '<table class="table">';
+        orderProductsTableHTML += '<thead><tr><th>Product Name</th><th>Variant</th><th>Price</th><th>Quantity</th><th>Order Id</th></tr></thead>';
+        orderProductsTableHTML += '<tbody>';
+
+        for (var i = 0; i < response.order_products.length; i++) {
+            orderProductsTableHTML += '<tr>';
+            orderProductsTableHTML += '<td>' + response.order_products[i].product_varient__product__product_name + '</td>';
+            orderProductsTableHTML += '<td>' + response.order_products[i].product_varient__color__color + '</td>';
+            orderProductsTableHTML += '<td>' + response.order_products[i].price + '</td>';
+            orderProductsTableHTML += '<td>' + response.order_products[i].quantity + '</td>';
+            orderProductsTableHTML += '<td>' + response.order_products[i].order_id + '</td>';
+            orderProductsTableHTML += '</tr>';
+            console.log(response.order_products[i].product_varient__color__color)
+        }
+
+        orderProductsTableHTML += '</tbody></table>';
+
+        document.getElementById("order-products-table").innerHTML = orderProductsTableHTML;
 
     
         

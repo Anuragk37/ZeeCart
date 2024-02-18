@@ -11,7 +11,7 @@
                <h4 class="mb-0 h4 fw-bold">My Bag ({{cart_items.count}} items)</h4>
             </div>
             <div class="ms-auto">
-               <a href="{% url 'user_products:products_list' %}" role="button" class="btn btn-light btn-ecomm">Continue Shopping</a>
+               <a href="{% url 'user_products:full_products_list' %}" role="button" class="btn btn-light btn-ecomm">Continue Shopping</a>
             </div>
          </div>
          {% if cart_items %}

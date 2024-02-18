@@ -10,7 +10,7 @@
                <h4 class="mb-0 h4 fw-bold">My Bag ({{wishlist_items.count}} items)</h4>
             </div>
             <div class="ms-auto">
-               <a href="{% url 'user_products:products_list' %}" role="button" class="btn btn-light btn-ecomm">Continue Shopping</a>
+               <a href="{% url 'user_products:full_products_list' %}" role="button" class="btn btn-light btn-ecomm">Continue Shopping</a>
             </div>
          </div>
          <div class="row g-4">
@@ -19,10 +19,12 @@
                <div class="card rounded-0 mb-3">
                   <div class="card-body">
                      <div class="d-flex flex-column flex-lg-row gap-3">
-                        <div class="product-img">
-                           <img src="{{ item.product.product_varient.first.product_images.first.image.url }}" width="150" alt="">
-
-                        </div>
+                        <a href="{% url 'user_products:product_detail' item.product.id %}">
+                           <div class="product-img">
+                              <img src="{{ item.product.product_varient.first.product_images.first.image.url }}" width="150" alt="">
+   
+                           </div>
+                        </a>
                         <div class="product-info flex-grow-1">
                            <h5 class="fw-bold mb-0">{{item.product.product_name}}</h5><br>
                            <p>colors: 

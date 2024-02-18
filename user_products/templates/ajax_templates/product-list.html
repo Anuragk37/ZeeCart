@@ -18,10 +18,18 @@
       <div class="card-body border-top">
          <h5 class="mb-0 fw-bold product-short-title">{{ product.product_name }}</h5>
          <div class="product-price d-flex align-items-center gap-2 mt-2">
-            <div class="h6 fw-bold">₹{{product.offer.first.discount_price}}</div>
+            {% if product.offer.exists or product.category.category_offer.exists %}
+            <div class="h6 fw-bold">₹{{ product.offer_price }}</div>
             <div class="h6 fw-light text-muted text-decoration-line-through">₹{{ product.price }}</div>
-            <div class="h6 fw-bold text-danger">({{product.offer.first.discount}}% off)</div>
-         </div>
+                {% if product.offer.first%}
+                <div class="h6 fw-bold text-danger">({{product.offer.first.discount}}% off)</div>
+                {% else %}
+                <div class="h6 fw-bold text-danger">({{product.category.category_offer.first.discount}}% off)</div>
+                {% endif %}
+            {% else %}
+            <div class="h6 fw-bold">₹{{ product.price }}</div>
+            {% endif %}
+        </div>
       </div>
    </div>
 </div>

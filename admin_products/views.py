@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url="admin_login")
 def products(request):
     if request.user.is_admin:
-        products = Products.objects.filter(is_deleted=False)
+        products = Products.objects.filter(is_deleted=False).order_by('-id')
         paginator = Paginator(products, 10)  # Show 10 products per page
 
         page = request.GET.get("page")
@@ -32,24 +32,35 @@ def products(request):
     else:
         return redirect("admin_login")
 
+@login_required(login_url="admin_login")
+def category(request):
+    if request.user.is_admin:
+        category = Category.objects.all().order_by('-id')
+
+        return render(
+            request,
+            "admin_products/category.html",
+            { "category": category},
+        )
+    else:
+        return redirect("admin_login")
 
 @login_required(login_url="admin_login")
 def add_category(request):
     if request.user.is_admin:
         form = CategoryForm()
-        category = Category.objects.all()
         if request.method == "POST":
             form = CategoryForm(request.POST, request.FILES)
             if form.is_valid():
                 form.save()
-                return JsonResponse({"redirect_url": reverse("add_category")})
+                return JsonResponse({"redirect_url": reverse("category")})
             else:
                 return JsonResponse({"error": "Form is not valid"})
 
         return render(
             request,
-            "admin_products/category.html",
-            {"form": form, "category": category},
+            "admin_products/add-category.html",
+            {"form": form},
         )
     else:
         return redirect("admin_login")
@@ -69,14 +80,32 @@ def delete_category(request, dlid):
 def edit_category(request, eid):
     if request.user.is_admin:
         category = Category.objects.get(id=eid)
-        form = CategoryForm(instance=category)
+
         if request.method == "POST":
             form = CategoryForm(request.POST, request.FILES, instance=category)
             if form.is_valid():
                 form.save()
-                return redirect("add_category")
+                return JsonResponse({"redirect_url": reverse("category")})
+            else:
+                return JsonResponse({"error": "Form is not valid"})
         else:
-            return render(request, "admin_products/category.html", {"form": form})
+            form = CategoryForm(instance=category)
+        
+        return render(request, "admin_products/add-category.html", {"form": form})
+    else:
+        return redirect("admin_login")
+
+
+@login_required(login_url="admin_login")
+def brands(request):
+    if request.user.is_admin:
+        brand = Brand.objects.all().order_by('-id')
+
+        return render(
+            request,
+            "admin_products/brands.html",
+            { "brand": brand},
+        )
     else:
         return redirect("admin_login")
 
@@ -85,17 +114,16 @@ def edit_category(request, eid):
 def add_brand(request):
     if request.user.is_admin:
         form = BrandForm()
-        brand = Brand.objects.all()
         if request.method == "POST":
             form = BrandForm(request.POST, request.FILES)
             if form.is_valid():
                 form.save()
-                return JsonResponse({"redirect_url": reverse("add_brand")})
+                return JsonResponse({"redirect_url": reverse("brands")})
             else:
                 return JsonResponse({"error": "Form is not valid"})
 
         return render(
-            request, "admin_products/brands.html", {"form": form, "brand": brand}
+            request, "admin_products/add-brand.html", {"form": form}
         )
     else:
         return redirect("admin_login")
@@ -107,6 +135,25 @@ def delete_brand(request, bid):
         brand = Brand.objects.get(id=bid)
         brand.delete()
         return redirect("add_brand")
+    else:
+        return redirect("admin_login")
+
+@login_required(login_url="admin_login")
+def edit_brand(request, eid):
+    if request.user.is_admin:
+        brand = Brand.objects.get(id=eid)
+
+        if request.method == "POST":
+            form = BrandForm(request.POST, request.FILES, instance=brand)
+            if form.is_valid():
+                form.save()
+                return JsonResponse({"redirect_url": reverse("brands")})
+            else:
+                return JsonResponse({"error": "Form is not valid"})
+        else:
+            form = BrandForm(instance=brand)
+        
+        return render(request, "admin_products/add-brand.html", {"form": form})
     else:
         return redirect("admin_login")
 
@@ -149,7 +196,7 @@ def add_products(request):
             form = ProductForm(request.POST)
             if form.is_valid():
                 form.save()
-                return redirect("add_products")
+                return redirect("product_varient")
         return render(request, "admin_products/add-products.html", {"form": form})
     else:
         return redirect("admin_login")
@@ -160,21 +207,24 @@ def edit_product(request, eid):
     if request.user.is_admin:
         product = Products.objects.get(id=eid)
         form = ProductForm(instance=product)
+
         if request.method == "POST":
             form = ProductForm(request.POST, instance=product)
             if form.is_valid():
-                price=form.cleaned_data.get('price')
-                if product.offer:
-                    discount=product.offer.first().discount
-                    product.offer_price=price-(price*discount)/100
-                elif product.category.category_offer:
-                    discount=product.category.category_offer.discount
-                    product.offer_price=price-(price*discount)/100
+                price = form.cleaned_data.get('price')
+
+                if product.offer.exists():
+                    discount = product.offer.all().first().discount
+                    product.offer_price = price - (price * discount) / 100
+                elif product.category and product.category.category_offer:
+                    discount = product.category.category_offer.first().discount
+                    product.offer_price = price - (price * discount) / 100
                 else:
-                    product.offer_price=price
+                    product.offer_price = price
+
                 product.save()
                 form.save()
-                
+
                 return redirect("products")
 
         return render(request, "admin_products/add-products.html", {"form": form})
@@ -203,8 +253,6 @@ def product_varient(request):
             images = request.FILES.getlist("images")
 
             images = [image for i, image in enumerate(images) if i >= len(images) / 2]
-
-            print(images)
             if form.is_valid():
                 product = form.cleaned_data.get("product")
                 color = form.cleaned_data.get("color")
@@ -271,6 +319,8 @@ def category_offer(request):
                     existing_offer.save()
                 else:
                     form.save()
+                offer_price(request, new_discount, cid=category.id)
+
                 return redirect("category_offer")
 
         return render(
@@ -288,7 +338,6 @@ def offer_price(request, discount, cid=None, pid=None):
         products = Products.objects.filter(category=category)
         for product in products:
             if not product.offer.filter(product=product).exists():
-                print("Inside if condition")
                 product.offer_price = product.price - (product.price * discount) / 100
                 product.save()
     if pid:

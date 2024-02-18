@@ -213,14 +213,14 @@ def sales_report(request):
     else:
         return redirect('admin_login')
 
-from django.core.serializers import serialize
-
+from django.utils import timezone
+from datetime import datetime
 from django.http import JsonResponse
 from django.core.serializers import serialize
 
 def date_filter(request):
-    from_date = request.GET.get('from_date')
-    to_date = request.GET.get('to_date')
+    from_date = timezone.make_aware(datetime.strptime(request.GET.get('from_date'), "%Y-%m-%d"))
+    to_date = timezone.make_aware(datetime.strptime(request.GET.get('to_date'), "%Y-%m-%d"))
 
     orders = Order.objects.filter(order_date__range=[from_date, to_date])
     order_count = orders.count()
@@ -237,31 +237,27 @@ def date_filter(request):
         ).order_by('-total_quantity')[:5]
     )
 
-    order_products = OrderItems.objects.filter(order__in=orders).select_related('product_varient__product').values()
+    order_products = OrderItems.objects.filter(order__in=orders)
 
-    
-    # Serialize the order_products
-    
-
-    
-
+    order_products_data = order_products.values(
+        'order_id',
+        'product_varient__product__product_name',
+        'product_varient__color__color',  
+        'quantity',
+        'price',
+    )
+ 
+    order_products_list = list(order_products_data)
+   
     context = {
         'order_count': order_count,
         'revenue': revenue,
         'order_items': order_items,
         'top_products': top_products,
-        'order_products': list(order_products)
+        'order_products': order_products_list,
     }
 
     return JsonResponse(context, safe=False)
-
-
-
-
-
-
-
-
 
 
 from django.template.loader import render_to_string

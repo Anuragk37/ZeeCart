@@ -54,16 +54,16 @@
         <h6 class="large-menu-title">Watchs</h6>
         <ul class="list-unstyled">
           {% for category in categories %}
-          <li><a href="{% url 'user_products:products_list' id=category.id type='category' %}">
+          <li><a href="{% url 'user_products:products_list' id=category.id type='category' %}">{{category.category_name}}
           </li>
           {% endfor %}
         </ul>
       </div>
       <!-- end col-3 -->
       <div class="col-12 col-xl-4 d-none d-xl-block">
-        <div class="pramotion-banner1">
+        <!-- <div class="pramotion-banner1">
           <img src="assets/images/menu-img.webp" class="img-fluid" alt="" />
-        </div>
+        </div> -->
       </div>
       <!-- end col-3 -->
     </div>

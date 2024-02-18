@@ -85,9 +85,6 @@ def update_quantity(request):
 
             cart_item.save()
 
-            print(
-                f"Updated quantity to {quantity_no} for cart item with ID {cart_item.id}"
-            )
 
         cart_products = Cart.objects.filter(user=user)
         cart_price = (
@@ -119,11 +116,9 @@ def update_quantity(request):
         }
 
         request.session["cart_data"] = response
-        print(f"Response: {response}")
 
         return JsonResponse(response)
     except Exception as e:
-        print(f"Error in update_quantity view: {e}")
         return JsonResponse({"error": "An error occurred"})
 
 

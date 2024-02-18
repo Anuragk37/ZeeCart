@@ -121,6 +121,13 @@
                         <p class="mb-0">₹{{order_data.delivery_charge}}</p>
                      </div>
                      <hr>
+                     {% if coupon_discount > 0 %}
+                     <div class="hstack align-items-center justify-content-between">
+                        <p class="mb-0">Coupon Discount</p>
+                        <p class="mb-0">₹{{coupon_discount}}</p>
+                     </div>
+                     <hr>
+                     {% endif %}
                      <div class="hstack align-items-center justify-content-between fw-bold text-content">
                         <p class="mb-0">Total Amount</p>
                         <p class="mb-0">₹<span id="total-price">{{order_data.total_amount}}</span></p>

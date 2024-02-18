@@ -93,11 +93,10 @@ def update_password(request):
         password1 = request.POST["password1"]
         password2 = request.POST["password2"]
         user = request.user
-
         if password1 == password2:
             user.set_password(password1)
             user.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, "Password updated successfully")
             return redirect("user_profile")
         else:

@@ -26,7 +26,6 @@ def add_amount(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             amount = int(request.POST["amount"])
-            print(amount)
 
             user = request.user
             wallet = Wallet.objects.get(user=user)

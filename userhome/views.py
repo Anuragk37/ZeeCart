@@ -42,9 +42,7 @@ def signup(request):
         form = NewUserForm()
         if request.method == "POST":
             form = NewUserForm(request.POST)
-            print(form)
             if form.is_valid():
-
                 try:
                     user = form.save(commit=False)
                     user.is_verified = False
@@ -53,12 +51,10 @@ def signup(request):
                     request.session["email"] = email
                     referal = form.cleaned_data.get("referal")
                     request.session["referal"] = referal
-
                     return send_otp(request)
 
                 except Exception as e:
                     messages.error(request, f"Error: {e}")
-                    print(e)
                     return redirect("signup")
 
         return render(request, "userhome/signup.html", {"form": form})
@@ -98,7 +94,7 @@ def verify_otp(request):
                 user.save()
 
                 if request.session.get("referal"):
-                    referal=request.session.get("referal")
+                    referal = request.session.get("referal")
                     referal_user = NewUser.objects.get(referal_code=referal)
                     referal_user_wallet = Wallet.objects.get(user=referal_user)
                     referal_user_wallet.balance += 500
@@ -114,7 +110,10 @@ def verify_otp(request):
                     wallet.balance += 200
                     wallet.save()
                     WalletTransaction.objects.create(
-                        user=user, wallet=wallet, amount=200, transaction_type="Cashback"
+                        user=user,
+                        wallet=wallet,
+                        amount=200,
+                        transaction_type="Cashback",
                     )
 
                 del request.session["otp"]
@@ -125,7 +124,6 @@ def verify_otp(request):
                 messages.error(request, "Invalid OTP. Please try again.")
                 return redirect(reverse("verify_otp"))
         except Exception as e:
-            print("error on", e)
             messages.error(request, f"Error On: {e}")
             return redirect(reverse("verify_otp"))
 

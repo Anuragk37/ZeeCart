@@ -217,3 +217,5 @@ LOGOUT_REDIRECT_URL = "/"
 
 KEY=os.getenv("KEY")
 SECRET=os.getenv("SECRET")
+
+CSRF_TRUSTED_ORIGINS = ['http://54.206.66.38/']

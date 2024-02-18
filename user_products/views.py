@@ -13,12 +13,10 @@ from userhome.models import *
 # Create your views here.
 def products_list(request, type=None, id=None):
     if type == 'brand':
-        print("Brand")
         products = Products.objects.filter(brand__id=id, is_deleted=False)
         categories = Category.objects.all()
         brands = None
     elif type == 'category':
-        print("Category")
         products = Products.objects.filter(category__id=id, is_deleted=False)
         brands = Brand.objects.all()
         categories = None
@@ -89,7 +87,7 @@ def filter_products(request):
         products = products.filter(brand__id__in=brands, is_deleted=False)
     if low_price and high_price:
         products = products.filter(
-            price__range=(low_price, high_price), is_deleted=False
+            offer_price__range=(low_price, high_price), is_deleted=False
         )
     if discount:
         products = products.filter(offer__discount__gt=discount, is_deleted=False)
@@ -101,7 +99,6 @@ def filter_products(request):
 @login_required(login_url="signin")
 def add_cart(request, pid):
     product_varient = ProductVarient.objects.get(id=pid)
-    print(product_varient)
     user = request.user
     cart_item, created = Cart.objects.get_or_create(
         user=user, product_varient=product_varient
@@ -147,12 +144,11 @@ def sort_products(request):
     sort_id = request.GET.get("sort_param")
 
     if sort_id == "1":
-        products = Products.objects.all().order_by("price")  # Ascending order
+        products = Products.objects.all().order_by("-price")  # Ascending order
     elif sort_id == "2":
-        products = Products.objects.all().order_by("-price")  # Descending order
+        products = Products.objects.all().order_by("price")  # Descending order
     else:
         products = Products.objects.all()  # Default order (you can modify this)
 
-    print(sort_id)
     data = render_to_string("ajax_templates/product-list.html", {"products": products})
     return JsonResponse({"data": data})

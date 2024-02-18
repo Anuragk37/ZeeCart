@@ -29,7 +29,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['54.206.66.38','0.0.0.0', 'localhost', '127.0.0.1']
+
 
 
 # Application definition
@@ -218,4 +220,5 @@ LOGOUT_REDIRECT_URL = "/"
 KEY=os.getenv("KEY")
 SECRET=os.getenv("SECRET")
 
-CSRF_TRUSTED_ORIGINS = ['http://54.206.66.38/']
+CSRF_TRUSTED_ORIGINS = ['https://zeecart.anuragk.online', 'https://54.206.66.38' ]
+

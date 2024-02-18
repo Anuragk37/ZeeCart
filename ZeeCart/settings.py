@@ -220,5 +220,5 @@ LOGOUT_REDIRECT_URL = "/"
 KEY=os.getenv("KEY")
 SECRET=os.getenv("SECRET")
 
-CSRF_TRUSTED_ORIGINS = ['https://zeecart.anuragk.online', 'https://54.206.66.38' ]
+CSRF_TRUSTED_ORIGINS = ['https://zeecart.anuragk.online', 'https://54.206.66.38','https://www.zeecart.anuragk.online' ]
 

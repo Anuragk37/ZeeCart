@@ -1,0 +1,42 @@
+{% extends 'adminhome/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4 mt-5">
+    <div class="row g-4 justify-content-center"> 
+      <div class="col-sm-12 col-md-10">
+         <div class="card shadow p-4">
+             <h3 class="mb-4">Order Items</h3>
+             <hr>
+
+             <div class="table-responsive"> <!-- Added table-responsive for small screens -->
+               <table class="table">
+                 <thead>
+                   <tr>
+                     <th scope="col">sl.no</th>
+                     <th scope="col">Title</th>
+                     <th scope="col">Image</th>
+                     <th scope="col">Action</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                 {% for banner in banners %}
+                   <tr>
+                     <th scope="row">{{forloop.counter}}</th>
+                     <td>{{banner.title}}</td>
+                     <td><img src="{{ banner.banner_image.url }}" alt="" style="width: 210px; height: 130px;"></td>
+                     <td>
+                        <a href="{% url 'edit' banner.id %}" class="btn btn-dark btn-sm" role="button">Edit</a>
+                        <a href="{% url 'delete_banner' banner.id %}" class="btn btn-dark btn-sm" role="button">Delete</a>
+                     </td>
+                   </tr>
+                 {% endfor %}
+                 </tbody>
+               </table>
+             </div>
+         </div>
+     </div>
+    </div>
+</div>
+<br><br><br><br><br>
+{% endblock %}

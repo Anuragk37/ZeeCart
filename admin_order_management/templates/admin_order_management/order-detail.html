@@ -5,33 +5,6 @@
 
 
 <div class="container-fluid pt-4 px-4 mt-5">
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <!-- Content in the first column (if any) -->
-    </div>
-    <div class="col-md-6 d-flex justify-content-center ">
-
-      <form action="{% url 'update_status' order.id %}" method="post" class="d-flex">
-        {% csrf_token %}
-        <div class="me-2">
-          <label for="order-status" class="form-label">Order Status:</label>
-          <select name="order-status" id="order-status" class="form-select form-select-sm" style="width: 150px;">
-            <option value="{{ order.order_status }}" selected>{{ order.order_status }}</option>
-            <option value="Pending">Pending</option>
-            <option value="Shipped">Shipped</option>
-            <option value="Delivered">Delivered</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn btn-dark btn-sm ml-auto mt-auto" style="height: 30px;">Update</button>
-      </form>
-    </div>
-
-
-  </div>
-
-
-
   <div class="row">
     <div class="col-md-4">
       <div class="card shadow">
@@ -107,6 +80,8 @@
                 <td>
                   {% if product.order_status == 'Canceled' %}
                   <p style="color: orangered;">canceled</p>
+                  {% elif product.order_status == 'Delivered' %}
+                  <p style="color: rgb(45, 134, 22);">Delivered</p>
                   {% else %}
                   <form action="{% url 'update_status' product.id %}" method="post" class="d-flex">
                     {% csrf_token %}

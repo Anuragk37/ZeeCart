@@ -3,8 +3,12 @@
 {% load crispy_forms_tags %}
 
 {% block head %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.css" integrity="sha512-bs9fAcCAeaDfA4A+NiShWR886eClUcBtqhipoY5DM60Y1V3BbVQlabthUBal5bq8Z8nnxxiyb1wfGX2n76N1Mw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" integrity="sha512-hvNR0F/e2J7zPPfLC9auFe3/SE0yG4aJCOd/qxew74NN7eyiSKjr7xJJMu1Jy2wf7FXITpWS1E/RY8yzuXN7VA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.css"
+   integrity="sha512-bs9fAcCAeaDfA4A+NiShWR886eClUcBtqhipoY5DM60Y1V3BbVQlabthUBal5bq8Z8nnxxiyb1wfGX2n76N1Mw=="
+   crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css"
+   integrity="sha512-hvNR0F/e2J7zPPfLC9auFe3/SE0yG4aJCOd/qxew74NN7eyiSKjr7xJJMu1Jy2wf7FXITpWS1E/RY8yzuXN7VA=="
+   crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 {% endblock %}
 
@@ -14,35 +18,38 @@
 
 <div class="container-fluid pt-4 px-4">
    <div class="row g-4 align-items-center justify-content-center">
-       <div class="col-sm-12 col-xl-6">
-           <div class="bg-light rounded h-100 p-4">
-               <h6 class="mb-4">Category Form</h6>
-               <form action="" method="post" enctype="multipart/form-data" id="image-form">
-                   {% csrf_token %}
-                   
-                   {{ form.category_name|as_crispy_field }}
+      <div class="col-sm-12 col-xl-6">
+         <div class="bg-light rounded h-100 p-4">
+            <h6 class="mb-4">Category Form</h6>
+            <form
+               action=""
+               method="post" enctype="multipart/form-data" id="image-form">
 
-                   <div id="current-image-box" class="mb-3">
-                       {% if form.instance.category_image %}
-                           <div class="d-flex flex-column">
-                               <label for="" class="mb-2">Current Image</label>
-                               <img src="{{ form.instance.category_image.url }}" alt="Current Image" class="current-image" style="width: 100%; max-width: 300px; height: auto;">
-                           </div>
-                       {% endif %}
-                   </div>
+               {% csrf_token %}
 
-                   <div id="file-input" class="mb-3">
-                       <div class="d-flex flex-column ">
-                           {{ form.category_image|as_crispy_field }}
-                       </div>
-                   </div>
+               {{ form.category_name|as_crispy_field }}
 
-                   <div id="image-box" class="mb-3">
-                       <button type="submit" class="btn btn-primary mt-4 mx-auto" id="crop-button">Save</button>
-                   </div>
-               </form>
-           </div>
-       </div>
+               <div id="current-image-box" class="mb-3">
+                  {% if form.instance.category_image %}
+                  <div class="d-flex flex-column">
+                     <label for="" class="mb-2">Current Image</label>
+                     <img src="{{ form.instance.category_image.url }}" alt="Current Image" class="current-image"
+                        style="width: 100%; max-width: 300px; height: auto;">
+                  </div>
+                  {% endif %}
+               </div>
+
+               <div id="file-input" class="mb-3">
+                  <div class="d-flex flex-column ">
+                     {{ form.category_image|as_crispy_field }}
+                  </div>
+               </div>
+
+               <div id="image-box" class="mb-3"></div>
+               <button type="submit" class="btn btn-primary mt-4 mx-auto" id="crop-button">Save</button>
+            </form>
+         </div>
+      </div>
    </div>
 </div>
 
@@ -51,102 +58,106 @@
 {% endblock %}
 
 {% block script %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js" integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+tYtAE0jE0kMx49bjJ3FgvS56wzmyfMUHbQ4Km2b7l9+Y/+Eg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.js" integrity="sha512-Zt7blzhYHCLHjU0c+e4ldn5kGAbwLKTSOTERgqSNyTB50wWSI21z0q6bn/dEIuqf6HiFzKJ6cfj2osRhklb4Og==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"
+   integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+tYtAE0jE0kMx49bjJ3FgvS56wzmyfMUHbQ4Km2b7l9+Y/+Eg=="
+   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.js"
+   integrity="sha512-Zt7blzhYHCLHjU0c+e4ldn5kGAbwLKTSOTERgqSNyTB50wWSI21z0q6bn/dEIuqf6HiFzKJ6cfj2osRhklb4Og=="
+   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
-    var cropper;
+   var cropper;
 
-    $('#id_category_image').on('change', function () {
-        var input = this;
-        var file = input.files[0];
+   $('#id_category_image').on('change', function () {
+      var input = this;
+      var file = input.files[0];
 
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // Display the image in the box
-                $('#image-box').html('<img id="cropper-image" src="' + e.target.result + '" style="max-width: 100%;">');
+      if (file) {
+         var reader = new FileReader();
+         reader.onload = function (e) {
+            // Display the image in the box
+            $('#image-box').html('<img id="cropper-image" src="' + e.target.result + '" style="max-width: 100%;">');
 
-                // Destroy previous Cropper instance if exists
-                if (cropper) {
-                    cropper.destroy();
-                }
+            // Destroy previous Cropper instance if exists
+            if (cropper) {
+               cropper.destroy();
+            }
 
-                // Initialize Cropper
-                cropper = new Cropper(document.getElementById('cropper-image'), {
-                    aspectRatio: 1,
-                    viewMode: 2,
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+            // Initialize Cropper
+            cropper = new Cropper(document.getElementById('cropper-image'), {
+               aspectRatio: 1,
+               viewMode: 2,
+            });
+         };
+         reader.readAsDataURL(file);
+      }
+   });
 
-    // Destroy Cropper on form reset
-    $('#image-form').on('reset', function () {
-        if (cropper) {
-            cropper.destroy();
-        }
-        $('#image-box').empty();  // Clear the displayed image
-    });
+   // Destroy Cropper on form reset
+   $('#image-form').on('reset', function () {
+      if (cropper) {
+         cropper.destroy();
+      }
+      $('#image-box').empty();  // Clear the displayed image
+   });
 
-    // Save cropped image on form submit
-    $('#image-form').on('submit', function (e) {
-    e.preventDefault();
+   // Save cropped image on form submit
+   $('#image-form').on('submit', function (e) {
+      e.preventDefault();
 
-    if (cropper) {
-        var canvas = cropper.getCroppedCanvas();
-        var croppedImageData = canvas.toDataURL('image/jpeg');
+      if (cropper) {
+         var canvas = cropper.getCroppedCanvas();
+         var croppedImageData = canvas.toDataURL('image/jpeg');
 
-        // Create a Blob from the Data URL
-        var blob = dataURLtoBlob(croppedImageData);
+         // Create a Blob from the Data URL
+         var blob = dataURLtoBlob(croppedImageData);
 
-        // Create a new FormData and append the Blob as a new file input
-        var formData = new FormData(this);
-        formData.set('category_image', blob, 'cropped_image.jpg');
+         // Create a new FormData and append the Blob as a new file input
+         var formData = new FormData(this);
+         formData.set('category_image', blob, 'cropped_image.jpg');
 
-        // Remove the original image input
-        formData.delete('id_category_image');
+         // Remove the original image input
+         formData.delete('id_category_image');
 
-        // Display the FormData object in the console for debugging
-        console.log([...formData]);
+         // Display the FormData object in the console for debugging
+         console.log([...formData]);
 
-        // Make an AJAX request to the server
-        $.ajax({
+         // Make an AJAX request to the server
+         $.ajax({
             type: "POST",
             url: $(this).attr('action'),
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log('Form submitted successfully');
-                if (response.redirect_url) {
-                    window.location.href = response.redirect_url;
-                } else {
-                    console.error('Missing redirect_url in the response:', response);
-                }
+               console.log('Form submitted successfully');
+               if (response.redirect_url) {
+                  window.location.href = response.redirect_url;
+               } else {
+                  console.error('Missing redirect_url in the response:', response);
+               }
 
             },
             error: function (error) {
-                console.error('Error submitting form:', error);
-                // Handle any error actions, if needed
+               console.error('Error submitting form:', error);
+               // Handle any error actions, if needed
             }
-        });
-    }
-});
+         });
+      }
+   });
 
-// Function to convert Data URL to Blob
-function dataURLtoBlob(dataURL) {
-    var parts = dataURL.split(';base64,');
-    var contentType = parts[0].split(':')[1];
-    var raw = window.atob(parts[1]);
-    var rawLength = raw.length;
-    var uInt8Array = new Uint8Array(rawLength);
-    for (var i = 0; i < rawLength; ++i) {
-        uInt8Array[i] = raw.charCodeAt(i);
-    }
-    return new Blob([uInt8Array], { type: contentType });
-}
+   // Function to convert Data URL to Blob
+   function dataURLtoBlob(dataURL) {
+      var parts = dataURL.split(';base64,');
+      var contentType = parts[0].split(':')[1];
+      var raw = window.atob(parts[1]);
+      var rawLength = raw.length;
+      var uInt8Array = new Uint8Array(rawLength);
+      for (var i = 0; i < rawLength; ++i) {
+         uInt8Array[i] = raw.charCodeAt(i);
+      }
+      return new Blob([uInt8Array], { type: contentType });
+   }
 
 
 </script>

@@ -13,6 +13,7 @@ from django.core.validators import MinValueValidator
 class Category(models.Model):
     category_name = models.CharField(max_length=200, unique=True)
     category_image = models.ImageField(upload_to="category-images/")
+    is_deleted=models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.category_name
@@ -21,6 +22,7 @@ class Category(models.Model):
 class Brand(models.Model):
     brand_name = models.CharField(max_length=200, unique=True)
     brand_image = models.ImageField(upload_to="brand_image/")
+    is_deleted=models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.brand_name

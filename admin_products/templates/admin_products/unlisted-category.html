@@ -1,0 +1,33 @@
+{% extends 'adminhome/base.html' %}
+{% load static%}
+
+{% block content %}
+<div class="container mt-5 p-5">
+    <h2 class="text-center mb-4">Product Details</h2>
+    <a href="{% url 'category' %}" class="btn btn-secondary btn-md mb-2 " role="button">Category</a>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">sl.no</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">image</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{category.category_name}}</td>
+                    <td><img src="{{ category.category_image.url }}" alt="" style="width: 180px; height: 130px;"></td>
+                    <td>
+                        <a href="{% url 'list_category' category.id%}" class="btn btn-secondary btn-sm" role="button">Restore</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

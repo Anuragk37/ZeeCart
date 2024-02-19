@@ -35,8 +35,9 @@
                    </div>
 
                    <div id="image-box" class="mb-3">
-                       <button type="submit" class="btn btn-primary mt-4 mx-auto" id="crop-button">Save</button>
+                       
                    </div>
+                   <button type="submit" class="btn btn-primary mt-4 mx-auto" id="crop-button">Save</button>
                </form>
            </div>
        </div>
@@ -104,7 +105,7 @@
         formData.delete('id_brand_image');
 
         // Display the FormData object in the console for debugging
-        console.log([...formData]);
+        console.log("this",[...formData]);
 
         // Make an AJAX request to the server
         $.ajax({

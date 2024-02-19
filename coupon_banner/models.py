@@ -28,11 +28,6 @@ class UserCoupon(models.Model):
 class Banner(models.Model):
     title=models.CharField(default="")
     banner_image=models.ImageField(upload_to='banner_image')
-    start_date=models.DateField()
-    end_date=models.DateField()
-    link=models.CharField(default="")
-
-    
 
     def __str__(self) -> str:
         return self.title

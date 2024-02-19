@@ -7,12 +7,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from openpyxl import Workbook
 
 
-
-from .forms import*
 from .models import*
 from userhome.models import *
 from user_order.models import *
-from coupon_banner.models import Banner
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
@@ -101,22 +98,7 @@ def admin_logout(request):
     logout(request)
     return redirect('admin_login')
 
-@login_required(login_url='admin_login')
-@user_passes_test(lambda u: u.is_admin)
-def add_banner(request):
-    if request.user.is_authenticated:
-        form=BannerForm()
-        if request.method=='POST':
-            form=BannerForm(request.POST,request.FILES)
-            if form.is_valid():
-                form.save()
-                return redirect('add_banner')
-            else:
-                return redirect('add_banner')
-        return render(request,'adminhome/add-banner.html',{'form':form})
-    else:
-        messages.error(request,'Your are not an admin')
-        return redirect('home')
+
 
 @login_required(login_url='admin_login')
 def sales_report(request):

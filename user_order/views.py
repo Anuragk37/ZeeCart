@@ -88,7 +88,7 @@ def checkout_payment(request):
    
 @login_required(login_url='signin')
 def cash_on_delivery(request):
-   try: 
+   try:
       user=request.user
       address_id=request.session.get('selected-address')
       selected_address=Address.objects.get(id=address_id)
@@ -109,6 +109,15 @@ def cash_on_delivery(request):
       order=Order.objects.create(user=user,address=address,payment_method='Cash_on_Delevery',total_amount=total_amount)
       for item in order_items:
          price=item.product_varient.product.offer_price
+         discount_price=0
+
+         if request.session.get('applied_coupons'):
+            applied_coupons=request.session.get('applied_coupons')
+            for coupon in applied_coupons:
+               c=Coupon.objects.get(code=coupon)
+               used_coupon=UserCoupon.objects.get(user=request.user,coupon=c.id)
+               discount_price=price-price*c.discount/100
+         price = discount_price
          OrderItems.objects.create(order=order,product_varient=item.product_varient,price=price,quantity=item.quantity)
          product_varient=item.product_varient
          product_varient.stock=product_varient.stock-item.quantity
@@ -116,13 +125,16 @@ def cash_on_delivery(request):
          
       cart_items=Cart.objects.filter(user=user)
       cart_items.delete()
+
       del request.session['selected-address']
       del request.session['cart_data']
+      del request.session['applied_coupons']
       messages.success(request, 'order placed successfully')
       return render(request,'user_order/success.html',{'address':address,'order_items':order_items,'total_amount':total_amount,'payment_method':'Cash_on_delivery'})
    except Exception as e:
+
       messages.error(request, f'Error placing order: {str(e)}')
-      return redirect('checkout_payment') 
+      return redirect('checkout_payment')
 
 @login_required(login_url='signin')
 def wallet_payment(request):
@@ -152,6 +164,14 @@ def wallet_payment(request):
 
          for item in order_items:
             price=item.product_varient.product.offer_price
+            discount_price=0
+            if request.session.get('applied_coupons'):
+               applied_coupons=request.session.get('applied_coupons')
+               for coupon in applied_coupons:
+                  c=Coupon.objects.get(code=coupon)
+                  used_coupon=UserCoupon.objects.get(user=request.user,coupon=c.id)
+                  discount_price=price-price*c.discount/100
+            price = discount_price
    
             OrderItems.objects.create(order=order,product_varient=item.product_varient,price=price,quantity=item.quantity,payment_status='Paid')
             product_varient=item.product_varient
@@ -160,6 +180,11 @@ def wallet_payment(request):
             
          cart_items=Cart.objects.filter(user=user)
          cart_items.delete()
+         cart_items=Cart.objects.filter(user=user)
+         cart_items.delete()
+         del request.session['selected-address']
+         del request.session['cart_data']
+         del request.session['applied_coupons']
          messages.success(request, 'order placed successfully')
 
          WalletTransaction.objects.create(user=user,wallet=wallet,amount=total_amount,transaction_type='Payment')
@@ -171,7 +196,6 @@ def wallet_payment(request):
          messages.error(request, 'insuffisient balance in your wallet')
          return redirect('checkout_payment')
    except Exception as e:
-
       messages.error(request, f'Error placing order: {str(e)}')
       return redirect('checkout_payment') 
    
@@ -200,8 +224,7 @@ def razorpay_check(request):
 
 
 def online_payment(request):
-   try:
-      
+   try:      
       payment_id=request.POST['payment_id']
 
       user=request.user
@@ -224,6 +247,14 @@ def online_payment(request):
       order=Order.objects.create(user=user,address=address,payment_method='Online_Payment',total_amount=total_amount)
       for item in order_items:
          price=item.product_varient.product.offer_price
+         discount_price=0
+         if request.session.get('applied_coupons'):
+            applied_coupons=request.session.get('applied_coupons')
+            for coupon in applied_coupons:
+               c=Coupon.objects.get(code=coupon)
+               used_coupon=UserCoupon.objects.get(user=request.user,coupon=c.id)
+               discount_price=price-price*c.discount/100
+         price = discount_price
          OrderItems.objects.create(order=order,product_varient=item.product_varient,price=price,quantity=item.quantity,payment_status='Paid')
          product_varient=item.product_varient
          product_varient.stock=product_varient.stock-item.quantity
@@ -235,6 +266,7 @@ def online_payment(request):
       cart_items.delete()
       del request.session['selected-address']
       del request.session['cart_data']
+      del request.session['applied_coupons']
       messages.success(request, 'order placed successfully')
 
       data = {'address':address,

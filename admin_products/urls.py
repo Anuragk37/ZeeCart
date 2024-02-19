@@ -12,13 +12,17 @@ urlpatterns = [
     path('category_offer/',views.category_offer,name='category_offer'),
 
     path('category/',views.category, name='category'),
+    path('unlisted-category/',views.unlisted_category, name='unlisted_category'),
     path('add-category/',views.add_category, name='add_category'),
     path('delete_category/<int:dlid>',views.delete_category, name='delete_category'),
+    path('list_category/<int:cid>',views.list_category, name='list_category'),
     path('edit_category/<int:eid>',views.edit_category, name='edit_category'),
 
     path('brands/',views.brands, name='brands'),
+    path('unlisted-brands/',views.unlisted_brands, name='unlisted_brands'),
     path('add-brand/',views.add_brand, name='add_brand'),
     path('delete_brand/<int:bid>',views.delete_brand, name='delete_brand'),
+    path('list_brand/<int:bid>',views.list_brand, name='list_brand'),
     path('edit-brand/<int:eid>',views.edit_brand, name='edit_brand'),
 
 

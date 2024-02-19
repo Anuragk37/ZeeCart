@@ -35,12 +35,25 @@ def products(request):
 @login_required(login_url="admin_login")
 def category(request):
     if request.user.is_admin:
-        category = Category.objects.all().order_by('-id')
+        category = Category.objects.filter(is_deleted=False).order_by('-id')
 
         return render(
             request,
             "admin_products/category.html",
             { "category": category},
+        )
+    else:
+        return redirect("admin_login")
+    
+@login_required(login_url="admin_login")
+def unlisted_category(request):
+    if request.user.is_admin:
+        category = Category.objects.filter(is_deleted=True)
+
+        return render(
+            request,
+            "admin_products/unlisted-category.html",
+            { "categories": category},
         )
     else:
         return redirect("admin_login")
@@ -70,8 +83,19 @@ def add_category(request):
 def delete_category(request, dlid):
     if request.user.is_admin:
         category = Category.objects.get(id=dlid)
-        category.delete()
-        return redirect("add_category")
+        category.is_deleted=True
+        category.save()
+        return redirect("category")
+    else:
+        return redirect("admin_login")
+
+@login_required(login_url="admin_login")
+def list_category(request, cid):
+    if request.user.is_admin:
+        category = Category.objects.get(id=cid)
+        category.is_deleted=False
+        category.save()
+        return redirect("unlisted_category")
     else:
         return redirect("admin_login")
 
@@ -99,12 +123,25 @@ def edit_category(request, eid):
 @login_required(login_url="admin_login")
 def brands(request):
     if request.user.is_admin:
-        brand = Brand.objects.all().order_by('-id')
+        brand = Brand.objects.filter(is_deleted=False)
 
         return render(
             request,
             "admin_products/brands.html",
             { "brand": brand},
+        )
+    else:
+        return redirect("admin_login")
+
+@login_required(login_url="admin_login")
+def unlisted_brands(request):
+    if request.user.is_admin:
+        brands = Brand.objects.filter(is_deleted=True)
+
+        return render(
+            request,
+            "admin_products/unlisted-brands.html",
+            { "brands": brands},
         )
     else:
         return redirect("admin_login")
@@ -133,7 +170,18 @@ def add_brand(request):
 def delete_brand(request, bid):
     if request.user.is_admin:
         brand = Brand.objects.get(id=bid)
-        brand.delete()
+        brand.is_deleted=True
+        brand.save()
+        return redirect("brands")
+    else:
+        return redirect("admin_login")
+
+@login_required(login_url="admin_login")
+def list_brand(request, bid):
+    if request.user.is_admin:
+        brand = Brand.objects.get(id=bid)
+        brand.is_deleted=False
+        brand.save()
         return redirect("add_brand")
     else:
         return redirect("admin_login")
@@ -156,7 +204,6 @@ def edit_brand(request, eid):
         return render(request, "admin_products/add-brand.html", {"form": form})
     else:
         return redirect("admin_login")
-
 
 @login_required(login_url="admin_login")
 def add_color(request):

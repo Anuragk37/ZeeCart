@@ -394,6 +394,7 @@
                 </div>
             </div>
         </div>
+
         <div id="order-products-table"></div>
     </div>
     
@@ -499,8 +500,6 @@
                 console.log("sending");
             },
             success: function (response) {
-                console.log("success")
-                console.log(response)
                 updateDateFilterReport(response);
             },
             
@@ -542,9 +541,7 @@
 
         orderProductsTableHTML += '</tbody></table>';
 
-        document.getElementById("order-products-table").innerHTML = orderProductsTableHTML;
-
-    
+        document.getElementById("order-products-table").innerHTML = orderProductsTableHTML;    
         
     }
 

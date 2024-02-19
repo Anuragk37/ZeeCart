@@ -8,7 +8,9 @@ from datetime import datetime
 from django.utils import timezone
 from django.contrib import messages
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
+from .forms import*
+from coupon_banner.models import Banner
 
 
 
@@ -138,6 +140,60 @@ def remove_applyed_coupon(request, code):
         messages.error(request, f"Error: {str(e)}")
 
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@login_required(login_url='admin_login')
+@user_passes_test(lambda u: u.is_admin)
+def add_banner(request):
+    if request.user.is_authenticated:
+        form=BannerForm()
+        if request.method=='POST':
+            form=BannerForm(request.POST,request.FILES)
+            if form.is_valid():
+                form.save()
+                return redirect('banners')
+            else:
+                return redirect('add_banner')
+        return render(request,'coupon_banner/add-banner.html',{'form':form})
+    else:
+        messages.error(request,'Your are not an admin')
+        return redirect('home')
+    
+@login_required(login_url='admin_login')
+def banners(request):
+    if request.user.is_admin:
+        banners=Banner.objects.all()
+        return render(request,'coupon_banner/banners.html',{'banners':banners})
+    else:
+      return redirect('admin_login')  
+    
+@login_required(login_url='admin_login')
+def delete_banner(request,bid):
+    if request.user.is_admin:
+        banner=Banner.objects.get(id=bid)
+        banner.delete()
+        return redirect('banners')
+    else:
+      return redirect('admin_login') 
+
+@login_required(login_url="admin_login")
+def edit_banner(request, bid):
+    if request.user.is_admin:
+        banner = Banner.objects.get(id=bid)
+
+        if request.method == "POST":
+            form = BannerForm(request.POST, request.FILES, instance=banner)
+            if form.is_valid():
+                form.save()
+                return redirect('banner')
+            else:
+                return redirect('add_banner')
+        else:
+            form = BannerForm(instance=banner)
+        
+        return render(request, "adminhome/add-banner.html", {"form": form})
+    else:
+        return redirect("admin_login")
 
 
 

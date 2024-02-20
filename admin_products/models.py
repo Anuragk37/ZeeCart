@@ -87,6 +87,7 @@ class ProductOffer(models.Model):
         Products, on_delete=models.CASCADE, related_name="offer"
     )
     discount = models.FloatField(default=0, validators=[MinValueValidator(0)])
+    is_active=models.BooleanField(default=True)
 
 
 class CategoryOffer(models.Model):
@@ -94,3 +95,4 @@ class CategoryOffer(models.Model):
         Category, on_delete=models.CASCADE, related_name="category_offer"
     )
     discount = models.FloatField(default=0, validators=[MinValueValidator(0)])
+    is_active=models.BooleanField(default=True)

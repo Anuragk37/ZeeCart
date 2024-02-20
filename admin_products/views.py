@@ -314,7 +314,7 @@ def product_varient(request):
                 for image in images:
                     ProductImage.objects.create(product_varient=variant, image=image)
 
-                return JsonResponse({"redirect_url": reverse("product_varient")})
+                return JsonResponse({"redirect_url": reverse("products")})
 
         return render(request, "admin_products/product-varient.html", {"form": form})
     else:
@@ -348,6 +348,43 @@ def offer_management(request):
     else:
         return redirect("admin_login")
 
+@login_required(login_url="admin_login")
+def deactivate_product_offer(request,oid):
+    if request.user.is_admin:
+        offer=ProductOffer.objects.get(id=oid)
+        offer.is_active=False
+        offer.save()
+        product=offer.product
+        category=product.category
+        category_offer_exist=CategoryOffer.objects.filter(category=category,is_active=True).exists()
+        if not category_offer_exist:
+            product.offer_price=product.price
+            product.save()
+        else:
+            category_offer=CategoryOffer.objects.get(category=category,is_active=True)
+            product.offer_price = product.price - (product.price * category_offer.discount) / 100
+            product.save()
+            
+        return redirect('offer_management')
+    else:
+        return redirect("admin_login")
+
+
+@login_required(login_url="admin_login")
+def activate_product_offer(request,oid):
+    if request.user.is_admin:
+        offer=ProductOffer.objects.get(id=oid)
+        offer.is_active=True
+        offer.save()
+        product=offer.product
+        product.offer_price = product.price - (product.price * offer.discount) / 100
+        product.save()
+            
+        return redirect('offer_management')
+    else:
+        return redirect("admin_login")
+
+
 
 @login_required(login_url="admin_login")
 def category_offer(request):
@@ -375,6 +412,38 @@ def category_offer(request):
             "admin_products/category-offer.html",
             {"form": form, "offers": offers},
         )
+    else:
+        return redirect("admin_login")
+
+@login_required(login_url="admin_login")
+def deactivate_category_offer(request,oid):
+    if request.user.is_admin:
+        offer=CategoryOffer.objects.get(id=oid)
+        offer.is_active=False
+        offer.save()
+        category=offer.category
+        products=Products.objects.filter(category=category)
+        for product in products:
+                if not product.offer.filter(product=product,is_active=True).exists():
+                    product.offer_price = product.price
+                    product.save()
+        return redirect('category_offer')
+    else:
+        return redirect("admin_login")
+
+@login_required(login_url="admin_login")
+def activate_category_offer(request,oid):
+    if request.user.is_admin:
+        offer=CategoryOffer.objects.get(id=oid)
+        offer.is_active=True
+        offer.save()
+        category=offer.category
+        products=Products.objects.filter(category=category)
+        for product in products:
+                if not product.offer.filter(product=product).exists():
+                    product.offer_price = product.price - (product.price * offer.discount) / 100
+                    product.save()
+        return redirect('category_offer')
     else:
         return redirect("admin_login")
 

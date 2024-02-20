@@ -20,6 +20,7 @@
                                <th scope="col">valid to</th>
                                <th scope="col">minimum amount</th>
                                <th scope="col">status</th>
+                               <th scope="col">Action</th>
                            </tr>
                        </thead>
                        <tbody>
@@ -35,10 +36,13 @@
                                  <td>{{coupon.min_order}}</td>
                                  <td>
                                     {% if coupon.active%}
-                                    <a href="{% url 'deactivate_coupon' coupon.id %}" class="btn btn-dark btn-sm role="button">deactive</a>
+                                    <a href="{% url 'deactivate_coupon' coupon.id %}" class="btn btn-dark btn-sm" role="button">deactive</a>
                                     {% else %}
-                                    <a href="{% url 'activate_coupon' coupon.id %}" class="btn btn-dark btn-sm role="button">active</a>
+                                    <a href="{% url 'activate_coupon' coupon.id %}" class="btn btn-dark btn-sm" role="button">active</a>
                                     {% endif %}
+                                 </td>
+                                 <td>
+                                    <a href="{% url 'edit_coupon' coupon.id %}" class="btn btn-dark btn-sm" role="button">Edit</a>
                                  </td>
                                  <!-- <td><a href="" class="btn btn-dark btn-sm" role="button" >Edit</a></td> -->
                              </tr>
@@ -47,23 +51,6 @@
                        </tbody>
                    </table>
                </div>
-               <div class="pagination">
-                  <span class="step-links">
-                      {% if coupons.has_previous %}
-                          <a href="?page=1">&laquo; first</a>
-                          <a href="?page={{ coupons.previous_page_number }}">previous</a>
-                      {% endif %}
-              
-                      <span class="current">
-                          Page {{ coupons.number }} of {{ order_list.paginator.num_pages }}.
-                      </span>
-              
-                      {% if order_list.has_next %}
-                          <a href="?page={{ coupons.next_page_number }}">next</a>
-                          <a href="?page={{ coupons.paginator.num_pages }}">last &raquo;</a>
-                      {% endif %}
-                  </span>
-              </div>
            </div>
        </div>
    </div>

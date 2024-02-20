@@ -31,6 +31,7 @@
                                <th scope="col">sl.no</th>
                                <th scope="col">Product</th>
                                <th scope="col">offer</th>
+                               <th scope="col">Action</th>
                            </tr>
                        </thead>
                        <tbody>
@@ -38,7 +39,14 @@
                            <tr>
                                <th scope="row">{{ forloop.counter }}</th>
                                <td>{{ offer.category }}</td>
-                               <td>{{ offer.discount }} %</td>
+                               <td>{{ offer.discount }} </td>
+                               <td>
+                                    {% if offer.is_active %}
+                                    <a href="{% url 'deactivate_category_offer' offer.id %}" class="btn btn-secondary btn-sm" tabindex="-1" role="button">Deactivate</a>
+                                    {% else %}
+                                    <a href="{% url 'activate_category_offer' offer.id %}" class="btn btn-secondary btn-sm" tabindex="-1" role="button">Activate</a>
+                                    {% endif %}
+                               </td>
                            </tr>
                            {% endfor %}
                        </tbody>

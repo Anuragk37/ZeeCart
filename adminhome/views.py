@@ -81,17 +81,20 @@ def dashboard(request):
         return redirect('admin_login')
 
 def admin_login(request):
-    if request.method=='POST':
-        email=request.POST['email']
-        password=request.POST['password']
-        user=authenticate(request,email=email,password=password)
-        if user is not None and user.is_admin:
-            login(request,user)
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Invalid credentials. Please try again.')
-            return render(request,'adminhome/signin.html')
-    return render(request,'adminhome/signin.html')
+    if request.user.is_authenticated and request.user.is_admin:
+        return redirect('dashboard')
+    else:
+        if request.method=='POST':
+            email=request.POST['email']
+            password=request.POST['password']
+            user=authenticate(request,email=email,password=password)
+            if user is not None and user.is_admin:
+                login(request,user)
+                return redirect('dashboard')
+            else:
+                messages.error(request, 'Invalid credentials. Please try again.')
+                return render(request,'adminhome/signin.html')
+        return render(request,'adminhome/signin.html')
 
 
 def admin_logout(request):
@@ -272,6 +275,7 @@ def sales_report_pdf(request,time_period):
             'top_products':top_products,
             'order_items_count':today_order_items,
             'order_products':today_order_products,
+            'end_date':today,
         }
     elif time_period =='week':
         today = timezone.now().date()
@@ -295,6 +299,8 @@ def sales_report_pdf(request,time_period):
             'top_products':week_top_products,
             'order_items_count':weekly_order_items,
             'order_products':weekly_order_products,
+            'start_date':week_ago,
+            'end_date':today,
         }
     
     elif time_period == 'month':
@@ -321,6 +327,8 @@ def sales_report_pdf(request,time_period):
             'top_products':month_top_products,
             'order_items_count':monthly_order_items,
             'order_products':monthly_order_products,
+            'start_date':month_start,
+            'end_date':today,
 
         }
     elif time_period == 'year':
@@ -345,6 +353,8 @@ def sales_report_pdf(request,time_period):
             'top_products':year_top_products,
             'order_items_count':yearly_order_items,
             'order_products':yearly_order_products,
+            'start_date':year_start,
+            'end_date':today,
         }
     
     elif from_date and to_date:
@@ -367,8 +377,9 @@ def sales_report_pdf(request,time_period):
             'top_products':top_products,
             'order_items_count':order_items,
             'order_products':date_order_products,
+            'start_date':from_date,
+            'end_date':to_date,
         }
-
     
 
     template = 'adminhome/sales-report-pdf.html'
@@ -383,8 +394,10 @@ def sales_report_pdf(request,time_period):
         return HttpResponse('We had some errors <pre>' + html_string + '</pre>')
     return response
 
-from openpyxl.styles import Font
+# exel download
 
+from openpyxl.styles import Font
+@login_required(login_url='admin_login')
 def excel_report(request,time_period):
     # Create a new workbook and add a worksheet
     wb = Workbook()
@@ -410,12 +423,14 @@ def excel_report(request,time_period):
             total_quantity=Sum('quantity')
         ).order_by('-total_quantity')[:5]
 
-        ws['A1'] = 'Total Order'
-        ws['A2'] = 'Total revenue'
-        ws['A3'] = 'Total order items'
-        ws['B1'] = orders
-        ws['B2'] = total_revenue
-        ws['B3'] = today_order_items
+        ws['A1'] = 'Date'
+        ws['A3'] = 'Total Order'
+        ws['A4'] = 'Total revenue'
+        ws['A5'] = 'Total order items'
+        ws['B1'] = today
+        ws['B3'] = orders
+        ws['B4'] = total_revenue
+        ws['B5'] = today_order_items
 
         for cell in ws['A1:B3']:
             set_header_styles(cell[0])
@@ -445,7 +460,6 @@ def excel_report(request,time_period):
         set_header_styles(ws['C15'])
         set_header_styles(ws['D15'])
 
-
         for i, order_product in enumerate(today_order_products):
             ws[f'A{i+16}'] = order_product.product_varient.product.product_name
             ws[f'B{i+16}'] = str(order_product.product_varient.color) 
@@ -466,13 +480,15 @@ def excel_report(request,time_period):
         ).annotate(
             total_quantity=Sum('quantity')
         ).order_by('-total_quantity')[:5]
-
-        ws['A1'] = 'Total Order'
-        ws['A2'] = 'Total revenue'
-        ws['A3'] = 'Total order items'
-        ws['B1'] = week_order_count
-        ws['B2'] = week_revenue
-        ws['B3'] = weekly_order_items
+  
+        ws['A1'] = 'Date'
+        ws['A3'] = 'Total Order'
+        ws['A4'] = 'Total revenue'
+        ws['A5'] = 'Total order items'
+        ws['B1'] = f"{week_ago} to {today}"
+        ws['B3'] = week_order_count
+        ws['B4'] = week_revenue
+        ws['B5'] = weekly_order_items
 
         for cell in ws['A1:B3']:
             set_header_styles(cell[0])
@@ -508,7 +524,6 @@ def excel_report(request,time_period):
             ws[f'B{i+16}'] = str(order_product.product_varient.color) 
             ws[f'C{i+16}'] = order_product.price
             ws[f'D{i+16}'] = order_product.order.id
-
         
     
     elif time_period == 'month':
@@ -525,11 +540,11 @@ def excel_report(request,time_period):
             total_quantity=Sum('quantity')
         ).order_by('-total_quantity')[:5]
 
-        
-
-        ws['A1'] = 'Total Order'
-        ws['A2'] = 'Total revenue'
-        ws['A3'] = 'Total order items'
+        ws['A1'] = 'Date'
+        ws['A3'] = 'Total Order'
+        ws['A4'] = 'Total revenue'
+        ws['A5'] = 'Total order items'
+        ws['B1'] = f"{month_start} to {today}"
         ws['B1'] = month_order_count
         ws['B2'] = month_revenue
         ws['B3'] = monthly_order_items
@@ -569,10 +584,6 @@ def excel_report(request,time_period):
             ws[f'C{i+16}'] = order_product.price
             ws[f'D{i+16}'] = order_product.order.id
 
-
-
-        
-
     elif time_period == 'year':
         today = timezone.now().date()
         month_start = today.replace(day=1)
@@ -587,9 +598,11 @@ def excel_report(request,time_period):
             total_quantity=Sum('quantity')
         ).order_by('-total_quantity')[:5]
 
-        ws['A1'] = 'Total Order'
-        ws['A2'] = 'Total revenue'
-        ws['A3'] = 'Total order items'
+        ws['A1'] = 'Date'
+        ws['A3'] = 'Total Order'
+        ws['A4'] = 'Total revenue'
+        ws['A5'] = 'Total order items'
+        ws['B1'] = f"{year_start} to {today}"
         ws['B1'] = year_order_count
         ws['B2'] = year_revenue
         ws['B3'] = yearly_order_items
@@ -642,9 +655,11 @@ def excel_report(request,time_period):
                 total_quantity=Sum('quantity')
             ).order_by('-total_quantity')[:5]
         )
-        ws['A1'] = 'Total Order'
-        ws['A2'] = 'Total revenue'
-        ws['A3'] = 'Total order items'
+        ws['A1'] = 'Date'
+        ws['A3'] = 'Total Order'
+        ws['A4'] = 'Total revenue'
+        ws['A5'] = 'Total order items'
+        ws['B1'] = f"{from_date} to {to_date}"
         ws['B1'] = order_count
         ws['B2'] = revenue
         ws['B3'] = order_items
@@ -684,10 +699,6 @@ def excel_report(request,time_period):
             ws[f'C{i+16}'] = order_product.price
             ws[f'D{i+16}'] = order_product.order.id
     
-
-
-  
-
     # Save the workbook to a response
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=report.xlsx'

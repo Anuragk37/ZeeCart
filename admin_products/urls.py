@@ -9,7 +9,12 @@ urlpatterns = [
     path('product_varient/',views.product_varient, name='product_varient'),
 
     path('offer-management/',views.offer_management,name='offer_management'),
+    path('deactivate-product-offer/<int:oid>',views.deactivate_product_offer,name='deactivate_product_offer'),
+    path('activate-product-offer/<int:oid>',views.activate_product_offer,name='activate_product_offer'),
+
     path('category_offer/',views.category_offer,name='category_offer'),
+    path('deactivate-category-offer/<int:oid>',views.deactivate_category_offer,name='deactivate_category_offer'),
+    path('activate-category-offer/<int:oid>',views.activate_category_offer,name='activate_category_offer'),
 
     path('category/',views.category, name='category'),
     path('unlisted-category/',views.unlisted_category, name='unlisted_category'),

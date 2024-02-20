@@ -185,15 +185,9 @@
                             <div class="col">
                                 <div class="card border shadow-none" style="height: 300px;">
                                     <div class="position-relative overflow-hidden">
-                                        <div class="product-options d-flex align-items-center justify-content-center gap-2 mx-auto position-absolute bottom-0 start-0 end-0">                                            
-                                                
-                                            {% if product in wishlist_products %}
-                                                <a href="{% url 'wishlist_cart:wishlist_remove' product.id %}"><i class="bi bi-heart-fill"></i></a>    
-                                            {% else %}
-                                                <a href="{% url 'user_products:add_wishlist' product.id %}"><i class="bi bi-heart"></i></a>
-                                            {% endif %}
-                                                
-                                            <a href="{% url 'user_products:add_cart' product.product_varient.first.id %}"><i class="bi bi-basket3"></i></a>
+                                        <div class="product-options d-flex align-items-center justify-content-center gap-2 mx-auto position-absolute bottom-0 start-0 end-0">
+                                            <!-- Product Options -->
+                                            <!-- Add your product options here -->
                                         </div>
                                         <!-- Product Images -->
                                         {% for product_varient in product.product_varient.all %}
@@ -209,7 +203,10 @@
                                         <h5 class="mb-0 fw-bold product-short-title">{{ product.product_name }}</h5>
                                         <!-- Product Price -->
                                         <div class="product-price d-flex align-items-center gap-2 mt-2">
-                                            {% if product.offer.exists or product.category.category_offer.exists %}
+                                            {% if product.price == product.offer_price   %}
+                                            <div class="h6 fw-bold">₹{{ product.price }}</div>
+                                            
+                                            {% else %}
                                             <div class="h6 fw-bold">₹{{ product.offer_price }}</div>
                                             <div class="h6 fw-light text-muted text-decoration-line-through">₹{{ product.price }}</div>
                                                 {% if product.offer.first%}
@@ -217,8 +214,7 @@
                                                 {% else %}
                                                 <div class="h6 fw-bold text-danger">({{product.category.category_offer.first.discount}}% off)</div>
                                                 {% endif %}
-                                            {% else %}
-                                            <div class="h6 fw-bold">₹{{ product.price }}</div>
+                                            
                                             {% endif %}
                                         </div>
                                     </div>

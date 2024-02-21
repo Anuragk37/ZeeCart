@@ -53,7 +53,7 @@ class ProductVarientForm(forms.ModelForm):
 class ProductOfferForm(forms.ModelForm):
     class Meta:
         model = ProductOffer
-        fields = "__all__"
+        exclude = ["is_active"]
 
         def clean(self):
             cleaned_data = super().clean()
@@ -68,7 +68,7 @@ class ProductOfferForm(forms.ModelForm):
 class CategoryOfferForm(forms.ModelForm):
     class Meta:
         model = CategoryOffer
-        fields = "__all__"
+        exclude = ["is_active"]
 
         def clean(self):
             cleaned_data = super().clean()

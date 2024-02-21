@@ -128,7 +128,8 @@ def cash_on_delivery(request):
 
       del request.session['selected-address']
       del request.session['cart_data']
-      del request.session['applied_coupons']
+      if request.session.get('applied_coupons'):
+         del request.session['applied_coupons']
       messages.success(request, 'order placed successfully')
       return render(request,'user_order/success.html',{'address':address,'order_items':order_items,'total_amount':total_amount,'payment_method':'Cash_on_delivery'})
    except Exception as e:
@@ -184,7 +185,8 @@ def wallet_payment(request):
          cart_items.delete()
          del request.session['selected-address']
          del request.session['cart_data']
-         del request.session['applied_coupons']
+         if request.session.get('applied_coupons'):
+            del request.session['applied_coupons']
          messages.success(request, 'order placed successfully')
 
          WalletTransaction.objects.create(user=user,wallet=wallet,amount=total_amount,transaction_type='Payment')
@@ -266,7 +268,8 @@ def online_payment(request):
       cart_items.delete()
       del request.session['selected-address']
       del request.session['cart_data']
-      del request.session['applied_coupons']
+      if request.session.get('applied_coupons'):
+         del request.session['applied_coupons']
       messages.success(request, 'order placed successfully')
 
       data = {'address':address,

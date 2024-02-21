@@ -29,10 +29,19 @@
                            <h5 class="fw-bold mb-0">{{item.product_varient.product.product_name}}</h5>
                            <h6 class="fw-bold mb-0">Color : {{item.product_varient.color }}</h6>
                            <div class="product-price d-flex align-items-center gap-2 mt-3">
+                              {% if item.product_varient.product.price == item.product_vareint.product.offer_price   %}
+                              <div class="h6 fw-bold">₹{{ item.product_varient.product.price|mul:item.quantity }}</div>
+                              
+                              {% else %}
                               <div class="h6 fw-bold">₹{{ item.product_varient.product.offer_price|mul:item.quantity }}</div>
-
-                              <div class="h6 fw-light text-muted text-decoration-line-through">₹{{item.product_varient.product.price}}</div>
-                              <div class="h6 fw-bold text-danger">({{item.product_varient.product.offer.first.discount}}% off)</div>
+                              <div class="h6 fw-light text-muted text-decoration-line-through">₹{{ item.product_varient.product.price|mul:item.quantity }}</div>
+                                  {% if product.offer.first%}
+                                  <div class="h6 fw-bold text-danger">({{item.product_varient.product.offer.first.discount}}% off)</div>
+                                  {% else %}
+                                  <div class="h6 fw-bold text-danger">({{item.product_varient.product.category.category_offer.first.discount}}% off)</div>
+                                  {% endif %}
+                              
+                              {% endif %}
                            </div>
                            {% if item.product_varient.stock == 0 %}
                            <h6 style="color: rgb(219, 7, 7); font-size: 14px;">out of stock</h6>

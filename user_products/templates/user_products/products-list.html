@@ -186,8 +186,13 @@
                                 <div class="card border shadow-none" style="height: 300px;">
                                     <div class="position-relative overflow-hidden">
                                         <div class="product-options d-flex align-items-center justify-content-center gap-2 mx-auto position-absolute bottom-0 start-0 end-0">
-                                            <!-- Product Options -->
-                                            <!-- Add your product options here -->
+                                            {% if product in wishlist_products %}
+                                            <a href="{% url 'wishlist_cart:wishlist_remove' product.id %}"><i class="bi bi-heart-fill"></i></a>    
+                                            {% else %}
+                                                <a href="{% url 'user_products:add_wishlist' product.id %}"><i class="bi bi-heart"></i></a>
+                                            {% endif %}
+                                                
+                                            <a href="{% url 'user_products:add_cart' product.product_varient.first.id %}"><i class="bi bi-basket3"></i></a>
                                         </div>
                                         <!-- Product Images -->
                                         {% for product_varient in product.product_varient.all %}

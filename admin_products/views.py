@@ -440,7 +440,7 @@ def activate_category_offer(request,oid):
         category=offer.category
         products=Products.objects.filter(category=category)
         for product in products:
-                if not product.offer.filter(product=product).exists():
+                if not product.offer.filter(product=product,is_active=True).exists():
                     product.offer_price = product.price - (product.price * offer.discount) / 100
                     product.save()
         return redirect('category_offer')

@@ -10,6 +10,11 @@ from .forms import *
 
 from userhome.models import *
 
+import random
+from django.conf import settings
+from django.urls import reverse
+from django.core.mail import send_mail
+
 
 # Create your views here.
 @login_required(login_url="signin")
@@ -21,14 +26,65 @@ def user_profile(request):
 @login_required(login_url="signin")
 def edit_profile(request):
     user = request.user
+    current_email = user.email
     form = EditProfileForm(instance=user)
+
     if request.method == "POST":
         form = EditProfileForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()
-            return redirect("user_profile")
+            email = form.cleaned_data.get("email")
+
+            request.session['email'] = email
+            request.session['current_email'] = current_email
+
+            if email != current_email:
+                form.save(email=current_email)
+                return redirect("otp_send")
+            else:
+                form.save()
+                return redirect("user_profile")
 
     return render(request, "user_profile/edit-profile.html", {"form": form})
+
+def otp_send(request):
+    otp = str(random.randint(100000, 999999))
+    email = request.session.get("email")
+    subject = "OTP Verification"
+    message = f"This is your OTP: {otp}"
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [email]
+
+    send_mail(subject, message, email_from, recipient_list)
+
+    request.session["otp"] = otp
+
+    return redirect("otp_verify")
+
+
+def otp_verify(request):
+    if request.method == "POST":
+        entered_otp = request.POST["entered_otp"]
+        try:
+            if entered_otp == request.session["otp"]:
+
+                user = NewUser.objects.get(email=request.session.get("current_email"))
+                user.email = request.session.get("email")
+                user.save()
+                del request.session["otp"]
+                del request.session["current_email"]
+
+                messages.success(request, "Profile has been updated.")
+                return redirect("user_profile")
+            else:
+                messages.error(request, "Invalid OTP. Please try again.")
+                return redirect(reverse("verify_otp"))
+        except Exception as e:
+            print("error on", e)
+            messages.error(request, f"Error On: {e}")
+            return redirect(reverse("verify_otp"))
+
+    return render(request, "user_profile/otp-verification.html")
+
 
 
 @login_required(login_url="signin")

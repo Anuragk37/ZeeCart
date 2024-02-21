@@ -123,7 +123,7 @@ def edit_category(request, eid):
 @login_required(login_url="admin_login")
 def brands(request):
     if request.user.is_admin:
-        brand = Brand.objects.filter(is_deleted=False)
+        brand = Brand.objects.filter(is_deleted=False).order_by('-id')
 
         return render(
             request,
@@ -325,7 +325,7 @@ def product_varient(request):
 def offer_management(request):
     if request.user.is_admin:
         form = ProductOfferForm()
-        offers = ProductOffer.objects.all()
+        offers = ProductOffer.objects.all().order_by('-id')
         if request.method == "POST":
             form = ProductOfferForm(request.POST)
             if form.is_valid():
@@ -390,7 +390,7 @@ def activate_product_offer(request,oid):
 def category_offer(request):
     if request.user.is_admin:
         form = CategoryOfferForm()
-        offers = CategoryOffer.objects.all()
+        offers = CategoryOffer.objects.all().order_by('-id')
         if request.method == "POST":
             form = CategoryOfferForm(request.POST)
             if form.is_valid():

@@ -29,8 +29,8 @@
             <p class="card-text">order status : {{order_item.order_status}}</p>
             {% endif %}
             <br>
-            <p class="card-text">payment : {{order.total_amount}}</p>
-            <p class="card-text">payment : {{order.payment_status}}</p>
+            <p class="card-text">Amount : {{order_item.price}}</p>
+            <p class="card-text">payment status : {{order_item.payment_status}}</p>
             <p class="card-text">payemnt method : {{order.get_payment_method_display}}</p>
             <p class="card-text"></p>
           </div>

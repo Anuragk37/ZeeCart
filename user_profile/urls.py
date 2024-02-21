@@ -11,4 +11,7 @@ urlpatterns = [
     path("check-password/", views.check_current_password, name="check_current_password"),
     path("update-password/", views.update_password, name="update_password"),
     path("view-coupon/", views.view_coupon, name="view_coupon"),
+
+    path("otp-send/", views.otp_send, name="otp_send"),
+    path("otp_verify/", views.otp_verify, name="otp_verify"),
 ]

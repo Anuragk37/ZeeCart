@@ -112,12 +112,18 @@
                         <h4 class="product-title fw-bold mb-1">{{product.product_name}}</h4>
                         <hr>
                         <div class="product-price d-flex align-items-center gap-3">
-                            <div class="h4 fw-bold">₹{{product.offer_price}}</div>
-                            <div class="h5 fw-light text-muted text-decoration-line-through">{{product.price}}</div>
-                            {% if product.offer.first%}
-                            <div class="h6 fw-bold text-danger">({{product.offer.first.discount}}% off)</div>
-                            {% else %}                              
-                            <div class="h6 fw-bold text-danger">({{product.category.category_offer.first.discount}}% off)</div>
+                            {% if product.price == product.offer_price   %}
+                                <div class="h6 fw-bold">₹{{ product.price }}</div>
+                                    
+                            {% else %}
+                                <div class="h6 fw-bold">₹{{ product.offer_price }}</div>
+                                <div class="h6 fw-light text-muted text-decoration-line-through">₹{{ product.price }}</div>
+                                    {% if product.offer.first%}
+                                    <div class="h6 fw-bold text-danger">({{product.offer.first.discount}}% off)</div>
+                                    {% else %}
+                                    <div class="h6 fw-bold text-danger">({{product.category.category_offer.first.discount}}% off)</div>
+                                    {% endif %}
+                                        
                             {% endif %}
                         </div>
                         <div class="product-info">

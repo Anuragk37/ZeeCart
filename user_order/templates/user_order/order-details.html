@@ -69,6 +69,8 @@
               <!-- ### -->
               {% if order_item.is_returned %}
               <p class="my-auto" style="color: rgb(0, 146, 29);"> Returned </p>
+              {% elif order_item.return_status == 'Request' %}
+              <p class="my-auto" style="color: rgb(3, 3, 3);">Return requested </p>
               {% elif order_item.return_status == 'Accepted' %}
               <p class="my-auto" style="color: rgb(0, 131, 11);">Return request Accepted </p>
               {% elif order_item.return_status == 'Rejected' %}

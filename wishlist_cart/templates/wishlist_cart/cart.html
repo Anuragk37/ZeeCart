@@ -36,10 +36,10 @@
                               {% else %}
                                  <div class="h6 fw-bold">₹{{ item.product_varient.product.offer_price|mul:item.quantity }}</div>
                                  <div class="h6 fw-light text-muted text-decoration-line-through">₹{{ item.product_varient.product.price|mul:item.quantity }}</div>
-                                       {% if product.offer.first%}
-                                       <div class="h6 fw-bold text-danger">({{product.offer.first.discount}}% off)</div>
+                                       {% if item.product_varient.product.offer.first%}
+                                       <div class="h6 fw-bold text-danger">({{item.product_varient.product.offer.first.discount}}% off)</div>
                                        {% else %}
-                                       <div class="h6 fw-bold text-danger">({{product.category.category_offer.first.discount}}% off)</div>
+                                       <div class="h6 fw-bold text-danger">({{item.product_varient.product.category.category_offer.first.discount}}% off)</div>
                                        {% endif %}
                                           
                               {% endif %}

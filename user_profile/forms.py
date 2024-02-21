@@ -29,6 +29,16 @@ class EditProfileForm(forms.ModelForm):
         widgets = {
             "password": forms.PasswordInput(),
         }
+    def save(self, email=None, commit=True):
+        instance = super().save(commit=False)
+
+        if email:
+            instance.email = email
+
+        if commit:
+            instance.save()
+
+        return instance
 
 
 class AddressForm(forms.ModelForm):

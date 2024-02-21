@@ -117,7 +117,7 @@ def cash_on_delivery(request):
                c=Coupon.objects.get(code=coupon)
                used_coupon=UserCoupon.objects.get(user=request.user,coupon=c.id)
                discount_price=price-price*c.discount/100
-         price = discount_price
+            price = discount_price
          OrderItems.objects.create(order=order,product_varient=item.product_varient,price=price,quantity=item.quantity)
          product_varient=item.product_varient
          product_varient.stock=product_varient.stock-item.quantity
@@ -172,7 +172,7 @@ def wallet_payment(request):
                   c=Coupon.objects.get(code=coupon)
                   used_coupon=UserCoupon.objects.get(user=request.user,coupon=c.id)
                   discount_price=price-price*c.discount/100
-            price = discount_price
+               price = discount_price
    
             OrderItems.objects.create(order=order,product_varient=item.product_varient,price=price,quantity=item.quantity,payment_status='Paid')
             product_varient=item.product_varient
@@ -256,7 +256,7 @@ def online_payment(request):
                c=Coupon.objects.get(code=coupon)
                used_coupon=UserCoupon.objects.get(user=request.user,coupon=c.id)
                discount_price=price-price*c.discount/100
-         price = discount_price
+            price = discount_price
          OrderItems.objects.create(order=order,product_varient=item.product_varient,price=price,quantity=item.quantity,payment_status='Paid')
          product_varient=item.product_varient
          product_varient.stock=product_varient.stock-item.quantity

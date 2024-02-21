@@ -48,6 +48,11 @@
 
 <div class="container">
     <h1>Sales Report</h1>
+    {% if start_date and end_date%}
+    <h2>Date : {{start_date}} to {{end_date}}</h2>
+    {% else %}
+    <h2>Date : {{end_date}}</h2>
+    {% endif %}
 
     <div style="overflow-x:auto;">
         <table class="sales-report">

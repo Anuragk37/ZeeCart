@@ -204,7 +204,7 @@ def edit_banner(request, bid):
         else:
             form = BannerForm(instance=banner)
         
-        return render(request, "adminhome/add-banner.html", {"form": form})
+        return render(request, "coupon_banner/add-banner.html", {"form": form})
     else:
         return redirect("admin_login")
 

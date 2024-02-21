@@ -182,7 +182,7 @@ def list_brand(request, bid):
         brand = Brand.objects.get(id=bid)
         brand.is_deleted=False
         brand.save()
-        return redirect("add_brand")
+        return redirect("unlisted_brands")
     else:
         return redirect("admin_login")
 

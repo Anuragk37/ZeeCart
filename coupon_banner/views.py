@@ -198,7 +198,7 @@ def edit_banner(request, bid):
             form = BannerForm(request.POST, request.FILES, instance=banner)
             if form.is_valid():
                 form.save()
-                return redirect('banner')
+                return redirect('banners')
             else:
                 return redirect('add_banner')
         else:

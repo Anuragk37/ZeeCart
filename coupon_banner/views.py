@@ -34,6 +34,19 @@ def add_coupon(request):
       return render(request,'coupon_banner/add-coupon.html',{'form':form})
    return redirect('admin_login')
 
+@login_required(login_url='admin_login')
+def edit_coupon(request,cid):
+    if request.user.is_admin:
+        coupon=Coupon.objects.get(id=cid)
+        form=CouponForm(instance=coupon)
+        if request.method=='POST':
+            form=CouponForm(request.POST,instance=coupon)
+            if form.is_valid():
+                form.save()
+                return redirect('coupon')
+        return render(request,'coupon_banner/add-coupon.html',{'form':form})
+    return redirect('admin_login')
+
 def apply_coupon(request):
     if request.method == 'POST':
       code = request.POST['code']

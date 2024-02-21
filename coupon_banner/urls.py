@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
    path('coupon/',views.coupon, name='coupon'),
    path('add_coupon/',views.add_coupon, name='add_coupon'),
+   path('edit-coupon/<int:cid>',views.edit_coupon, name='edit_coupon'),
    path('apply-coupon/',views.apply_coupon, name='apply_coupon'),
 
    path('activate-coupon/<int:coupon_id>',views.activate_coupon, name='activate_coupon'),

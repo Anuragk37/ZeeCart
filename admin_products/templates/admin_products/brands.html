@@ -33,7 +33,7 @@
                                 <td>{{ b.brand_name }}</td>
                                 <td><img src="{{ b.brand_image.url }}" alt="" style="width: 180px; height: 130px;"></td>
                                 <td>
-                                    <a href="{% url 'delete_brand' b.id %}" class="btn btn-secondary btn-sm" tabindex="-1" role="button">Delete</a>
+                                    <a href="{% url 'delete_brand' b.id %}" class="btn btn-secondary btn-sm" tabindex="-1" role="button">Unlist</a>
                                     <a href="{% url 'edit_brand' b.id %}" class="btn btn-secondary btn-sm" tabindex="-1" role="button">Edit</a>
                                 </td>
                             </tr>

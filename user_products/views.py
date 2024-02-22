@@ -14,16 +14,16 @@ from userhome.models import *
 def products_list(request, type=None, id=None):
     if type == 'brand':
         products = Products.objects.filter(brand__id=id, is_deleted=False)
-        categories = Category.objects.all()
+        categories = Category.objects.filter(is_deleted=False)
         brands = None
     elif type == 'category':
         products = Products.objects.filter(category__id=id, is_deleted=False)
-        brands = Brand.objects.all()
+        brands = Brand.objects.filter(is_deleted=False)
         categories = None
     else:
         products = Products.objects.filter(is_deleted=False)
-        categories = Category.objects.all()
-        brands = Brand.objects.all()
+        categories = Category.objects.filter(is_deleted=False)
+        brands = Brand.objects.filter(is_deleted=False)
 
     context = {"products": products, "categories": categories, "brands": brands}
 

@@ -19,8 +19,8 @@ from django.contrib.auth.decorators import login_required
 
 # home page
 def home(request):
-    brands = Brand.objects.all()
-    categories = Category.objects.all()
+    brands = Brand.objects.filter(is_deleted=False)
+    categories = Category.objects.filter(is_deleted=False)
     products = Products.objects.all().order_by("-created_at")
     banners = Banner.objects.all()
     coupons = Coupon.objects.all()

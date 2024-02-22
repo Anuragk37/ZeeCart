@@ -22,17 +22,14 @@
          </div>
          <div class="row g-4 ">
             <div class="col-12 col-xl-8">
-               <div class="card rounded-0 payment-method">
+               <div class="card rounded-0 payment-method  mt-5">
                   <div class="row g-0">
                      <div class="col-12 col-lg-4 bg-light">
                         <div class="nav flex-column nav-pills">
-                           <button class="nav-link rounded-0" data-bs-toggle="pill" data-bs-target="#v-pills-home"
+                           <button class="nav-link active rounded-0" data-bs-toggle="pill" data-bs-target="#v-pills-home"
                               type="button"><i class="bi bi-cash-stack me-2"></i>Cash On Delivery</button>
                            <button class="nav-link rounded-0" data-bs-toggle="pill" data-bs-target="#v-pills-profile"
                               type="button"><i class="bi bi-paypal me-2"></i>Razor Pay</button>
-                           <button class="nav-link active rounded-0" data-bs-toggle="pill"
-                              data-bs-target="#v-pills-messages" type="button"><i
-                                 class="bi bi-credit-card-2-back me-2"></i>Credit/Debit Card</button>
                            <button class="nav-link rounded-0 border-bottom-0" id="v-pills-settings-tab"
                               data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button"><i
                                  class="bi bi-bank2 me-2"></i>Wallet</button>
@@ -40,60 +37,19 @@
                      </div>
                      <div class="col-12 col-lg-8">
                         <div class="tab-content p-3">
-                           <div class="tab-pane fade" id="v-pills-home">
+                           <div class="tab-pane fade how active" id="v-pills-home">
                               <h5 class="mb-3 fw-bold">I would like to pay after product delivery</h5>
                               <a href="{% url 'cash_on_delivery' %}" role="button" class="btn btn-ecomm btn-dark w-100 py-3 px-5">Place Order</a>
                            </div>
                            <div class="tab-pane fade" id="v-pills-profile">
                               <div class="mb-3">
-                                 <p>You can pay through razor pay </p>
+                                 <h5>You can pay through razor pay </h5>
                               </div>
                               <button type="button" id="rzp-button1" class="btn btn-ecomm btn-dark w-100 py-3 px-5">Pay Now</button>
                            </div>
-                           <div class="tab-pane fade show active" id="v-pills-messages">
-                              <div class="row g-3">
-                                 <div class="col-12">
-                                    <div class="form-floating">
-                                       <input type="text" class="form-control rounded-0" id="floatingCardNumber"
-                                          placeholder="Card Number">
-                                       <label for="floatingCardNumber">Card Number</label>
-                                    </div>
-                                 </div>
-                                 <div class="col-12">
-                                    <div class="form-floating">
-                                       <input type="text" class="form-control rounded-0" id="floatingNameonCard"
-                                          placeholder="Name on Card">
-                                       <label for="floatingNameonCard">Name on Card</label>
-                                    </div>
-                                 </div>
-                                 <div class="col-12 col-lg-8">
-                                    <div class="form-floating">
-                                       <input type="text" class="form-control rounded-0" id="floatingValidity"
-                                          placeholder="Validity (MM/YY)">
-                                       <label for="floatingValidity">Validity (MM/YY)</label>
-                                    </div>
-                                 </div>
-                                 <div class="col-12 col-lg-4">
-                                    <div class="form-floating">
-                                       <input type="text" class="form-control rounded-0" id="floatingCCV"
-                                          placeholder="CCV">
-                                       <label for="floatingCCV">CCV</label>
-                                    </div>
-                                 </div>
-                                 <div class="col-12">
-                                    <button type="button" class="btn btn-ecomm btn-dark w-100 py-3 px-5">Pay
-                                       Now</button>
-                                 </div>
-                              </div>end row
-                           </div>
                            <div class="tab-pane fade" id="v-pills-settings">
-                              
+                              <h5 class="mb-3 fw-bold">You can pay through your wallet</h5>
                               <a href="{% url 'wallet_payment' %}" role="button" class="btn btn-ecomm btn-dark w-100 py-3 px-5 mb-3">Pay Now</a>
-                              <div class="">
-                                 <p class="mb-0">Note: After clicking on the button, you will be directed to a secure
-                                    gateway for payment. After completing the payment process, you will be redirected
-                                    back to the website to view details of your order.</p>
-                              </div>
                            </div>
                         </div>
                      </div>
